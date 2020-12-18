@@ -14,8 +14,8 @@
         - [Output Directory](#output-directory)
         - [Endpoint Description](#endpoint-description)
         - [Combine Wiremocks to 1 Swagger](#combine-wiremocks-to-1-swagger)
-        - [Combine Wiremocks in a Folder to 1 Swagger](#combine-wiremocks-in-a-folder-to-1-swagger)
-    - [Automated help](#automated-help)
+        - [Quit](#quit)
+    - [Help List](#helplist)
 
 # Usage
 How to use the script
@@ -252,14 +252,15 @@ $ node wiremock2swagger3.js -c testing-1.json testing-2.json testing-3.json
 ```
 
 ## Combine Wiremocks in a Folder to 1 Swagger
-Use `-C` to combine several wiremocks in a folder to 1 Swagger file.
-```bash
-$ node wiremock2swagger3.js -C <path-of-directory>
-$ node wiremock2swagger3.js -C /Users/abc/tests/
+Use `\q` to exit the program.
+```py
+def quit_prog():
+    print("Thank and GoodBye")
+    exit()
 ```
 
-# Automated help
-The help information is auto-generated based on the information commander already knows about your program. The default help option is `-h,--help`.
+# Help List
+The help information is generated based on the information commander already knows about the program. The default help option is `-h,--help`.
 ```bash
 -p,   --print              Print all dataframe           
 -C,   --count_column       Count the number of the cell values of a selected column
