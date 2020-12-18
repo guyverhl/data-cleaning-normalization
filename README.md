@@ -13,7 +13,7 @@
         - [Directory](#directory)
         - [Output Directory](#output-directory)
         - [Endpoint Description](#endpoint-description)
-        - [Combine Wiremocks to 1 Swagger](#combine-wiremocks-to-1-swagger)
+        - [Sorting](#sorting)
         - [Quit](#quit)
     - [Help List](#helplist)
 
@@ -244,14 +244,29 @@ The value of endpoint description will save in the variable `endpointDesc`.
 }
 ```
 
-## Combine Wiremocks to 1 Swagger
-Use `-c` to combine several wiremocks to 1 Swagger file.
-```bash
-$ node wiremock2swagger3.js -c <name-of-json>
-$ node wiremock2swagger3.js -c testing-1.json testing-2.json testing-3.json
+## Sorting
+Use `-s` to sort the dataframe by selected column.
+```py
+def sort_by_column():
+    global df
+
+    print(df.columns.values)
+    col = input("What columns you want to sort? ") 
+    if col not in df.columns.values: return sort_by_column()
+    val = input("\'a\' for ascending or \'d\' for descending: ")
+    if val == 'd': df = df.sort_values(by=[col], ascending = False)
+    elif val == 'a': df = df.sort_values(by=[col], ascending = True)
+    else: 
+        print('Invalid input!')
+        return sort_by_column()
+    
+    df.reset_index(inplace=True)
+    del df['index']
+
+    return main()
 ```
 
-## Combine Wiremocks in a Folder to 1 Swagger
+## Quit
 Use `\q` to exit the program.
 ```py
 def quit_prog():
@@ -271,6 +286,7 @@ The help information is generated based on the information commander already kno
 -v,   --view_value         View the selected cell value  
 -o,   --gen_csv            Generate CSV file for database
 -s,   --sort               Sort the dataframe by selected column
+-t,   --textcase           Change values textcase        
 \q,   --quit               Quit the program              
 -h,   --help               Show command list
 ```
