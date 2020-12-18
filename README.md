@@ -37,6 +37,11 @@ python3 ch4_individual_ex.py
 ```
 ## Input CSV
 First input CSV for processing.
+`CSV name` in current folder with program or `absolute path` is accessable.
+```bash
+Input CSV file (staff_dir.csv): staff_dir.csv
+```
+Input parameter is `csv_file`.
 ```py
 def input_csv():
     global raw_data
@@ -49,6 +54,9 @@ def input_csv():
         return input_csv()
     else:
         return
+
+df = pd.DataFrame(raw_data)
+check_columns_with_empty_cell()
 ```
 
 ## Check Empty Values
