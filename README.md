@@ -39,25 +39,23 @@ First input CSV for processing.
 Input CSV file (staff_dir.csv): staff_dir.csv
 ```
 Input parameter is `raw_data`. Try except is used to prevend `No file or directory` error.
+User can terminate the program by typing `\q`.
+Error will be printed and the program will force user to input correct file or directory again.
+This function will return parameter `raw_data` to create dataframe.
 ```py
 raw_data = None
 def input_csv(raw_data):
     try:
         csv_file = input("Input CSV file (staff_dir.csv): ")
-        # Terminate program if user type '\q'
         if csv_file == '\q': exit()
         raw_data = pd.read_csv(csv_file)
     except Exception as e:
-        # Print error and force user to input correct file or directory again
         print(e)
         return input_csv(raw_data)
     else:
-        # Return the value to global variable
         return raw_data
 
-# Calling input_csv function to generate raw_data variable
 raw_data = input_csv(raw_data)
-# Create dataframe for processing
 df = pd.DataFrame(raw_data)
 ```
 ## Check Empty Values
