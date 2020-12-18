@@ -22,10 +22,6 @@
 
 # Requirement
 This script requires `pandas`, `numpy` and `re` library to run, you need to install to run successfully.
-For checking:
-```bash
-pip3 list
-```
 ```bash
 pip3 install pandas
 ```
@@ -35,36 +31,34 @@ The program is processing data cleaning. It will detect any spaces and empty val
 ```bash
 python3 ch4_individual_ex.py
 ```
+
 ## Input CSV
 First input CSV for processing.
 `CSV name` in current folder with program or `absolute path` is accessable.
 ```bash
 Input CSV file (staff_dir.csv): staff_dir.csv
 ```
-Input parameter is `csv_file`.
+Input parameter is `raw_data`. Try except is used to prevend `No file or directory` error.
 ```py
-def input_csv():
-    global raw_data
+raw_data = None
+def input_csv(raw_data):
     try:
         csv_file = input("Input CSV file (staff_dir.csv): ")
+        # Terminate program if user type '\q'
         if csv_file == '\q': exit()
         raw_data = pd.read_csv(csv_file)
     except Exception as e:
+        # Print error and force user to input correct file or directory again
         print(e)
-        return input_csv()
+        return input_csv(raw_data)
     else:
-        return
+        # Return the value to global variable
+        return raw_data
 
+# Calling input_csv function to generate raw_data variable
+raw_data = input_csv(raw_data)
+# Create dataframe for processing
 df = pd.DataFrame(raw_data)
-check_columns_with_empty_cell()
-```
-Preview of the dataframe can be checked.
-```bas   Title  Surname              Given Name                                           Position            Location   E-mail Address Phone Number
-0  Prof.  GOODWIN                  A. Lin                                               Dean              MW 421     alg25@hku.hk     25698745
-1    Dr.  BRIDGES        Susan   Margaret  Associate Professor\r\nAssistant Dean \r\n(Lea...  MW 545\r\nCPD 1.79  sbridges@hku.hk     25698746
-2    Ms.     CHOW         Mei Ling Jessie                Lecturer\r\n(Experiential Learning)              MW 649   jmlchow@hku.hk     25698747
-3    Ms.      MOK     Wai Fung Candace         Assistant Lecturer\r\n(Experiential Learning)              MW 647    cwfmok@hku.hk     25698748
-4    Mr.     WONG    Nga    Lun   Alan                                     Learning Designer              MW 543   alanwnl@hku.hk    2569-8749
 ```
 ## Check Empty Values
 Then the program will look for empty values.
