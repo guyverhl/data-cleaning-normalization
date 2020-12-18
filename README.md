@@ -311,6 +311,7 @@ The help information is generated based on the information commander already kno
 ```
 
 # Appendix 
+![alt text](flow-chart.png "flow-chart")
 ```py
 import pandas as pd
 import numpy as np
