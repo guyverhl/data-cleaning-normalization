@@ -1,8 +1,7 @@
 # Data Cleaning Normalization
 - [Data Cleaning Normalization](#datacleaningnormalization)
+    - [Requirement](#requirement)
     - [Usage](#usage)
-        - [Requirement](#requirement)
-        - [Insert File](#insert-file)
     - [Options](#options)
         - [Modify Column Title](#modify-column-title)
         - [Modify cell](#modify-cell)
@@ -17,29 +16,20 @@
     - [Help List](#helplist)
     - [Appendix](#appendix)
 
+# Requirement
+This script requires `pandas`, `numpy` and `re` library to run, you need to install to run successfully.
+For checking:
+```bash
+pip3 list
+```
+```bash
+pip3 install pandas
+```
+
 # Usage
-How to use the script
-
-## Requirement
-This script requires `commander.js` package to run, you need to install the library using `package.json`.
+Use the script
 ```bash
-npm install
-```
-
-## Insert File
-A json file is needed to convert to swagger file. Since the script run at your current location, you only need to input the name of that json file by adding `-f`.
-```bash
-$ node wiremock2swagger3.js -f <name-of-json>
-$ node wiremock2swagger3.js -f testing.json
-```
-or use `-d` to insert wiremock json folder for converting to swagger3.0. You should put `all and only` wiremock json files into the folder.
-```bash
-$ node wiremock2swagger3.js -d <path-of-directory>
-$ node wiremock2swagger3.js -d /Users/abc/tests/
-```
-And the output should be located at your current folder. Result with the file name will prompt.
-```bash
-swagger-testing-001.json is created.
+python3 ch4_individual_ex.py
 ```
 
 # Options
