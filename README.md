@@ -2,6 +2,10 @@
 - [Data Cleaning Normalization](#datacleaningnormalization)
     - [Requirement](#requirement)
     - [Usage](#usage)
+        - [Input CSV](#input-csv)
+        - [Check Empty Values](#check-empty-values)
+        - [Tidy Dataframe](#tidy-dataframe)
+        - [Normalization](#normalization)
     - [Options](#options)
         - [Modify Column Title](#modify-column-title)
         - [Modify cell](#modify-cell)
@@ -27,9 +31,109 @@ pip3 install pandas
 ```
 
 # Usage
-Use the script
+The program is processing data cleaning. It will detect any spaces and empty values, then transform to first normal formal from normalization. After that user can reproduce a cleaned version of CSV file.
 ```bash
 python3 ch4_individual_ex.py
+```
+## Input CSV
+First input CSV for processing.
+```py
+def input_csv():
+    global raw_data
+    try:
+        csv_file = input("Input CSV file (staff_dir.csv): ")
+        if csv_file == '\q': exit()
+        raw_data = pd.read_csv(csv_file)
+    except Exception as e:
+        print(e)
+        return input_csv()
+    else:
+        return
+```
+
+## Check Empty Values
+Then the program will look for empty values.
+```py
+def check_columns_with_empty_cell():
+    global df
+    global empty_cols
+
+    df.columns = [' '.join(i.split()) for i in df.columns]
+    empty_cols_name = [value for value in df.columns if "Unnamed" in value]
+    empty_cols = [col for col in df.columns if df[col].isnull().any()]
+    print("You have", len(empty_cols_name), "columns without naming")
+    print("You have", len(empty_cols), "columns with empty cells")
+
+    return main()
+```
+
+## Tidy Dataframe
+To delete all excessing spaces and replace data to `Title` textcase, use `-r` to start processing.
+```py
+def tidy_dataframe():
+    global df
+    global column_with_multi_values
+
+    print("Diminish spaces and title values")
+
+    for col in list(df.columns):
+        for row in range(0, len(df)):
+            cell_value = df[col][row]
+            if type(cell_value) == np.int64:
+                cell_value = str(cell_value.item())
+            cell_value_list = list(map(str, cell_value.split("\r\n")))
+            if len(cell_value_list) > 1:
+                if not col in column_with_multi_values:
+                    column_with_multi_values.append(col)
+
+    column_with_single_value = [i for i in df.columns if i not in column_with_multi_values]
+
+    for i in column_with_single_value:
+        # print(type(df[i][0]) == str)
+        if 'Phone' in i:
+            # df[i] = [i.replace("-", "") for i in df[i]]
+            df[i] = [re.sub(r"\b-\b", "", i) for i in df[i]]
+        else:
+            df[i] = [' '.join(i.split()).title() for i in df[i]]
+
+    for i in column_with_multi_values:
+        df[i] = [i.replace("\r\n(", "(") for i in df[i]]
+
+    return normalization(column_with_multi_values)
+```
+
+## Normalization
+Then the program will normalize dataframe to 1st normal form automedically.
+```py
+def normalization(column_with_multi_values):
+    global df
+    print("NORMALIZATION")
+
+    for i in range(0, len(column_with_multi_values)):
+        selected_column = list(column_with_multi_values[i].split(" "))
+        set_index_list = [i for i in df.columns if i not in selected_column]
+        df = df.set_index(set_index_list)
+        df = df.apply(lambda x: df[column_with_multi_values[i]].str.split('\r\n').explode())
+        df = df.reset_index()
+
+    for i in column_with_multi_values:
+        # print(type(df[i][0]) == str)
+        if 'E-mail' in i:
+            df[i] = [' '.join(i.split()).lower() for i in df[i]]
+        if 'Location' in i:
+            df[i] = [''.join(i.split()).upper() for i in df[i]]
+        elif 'Position' in i:
+            df[i] = [' '.join(i.split()).title() for i in df[i]]
+            df[i] = [i.replace("Assoc.", "Associate") for i in df[i]]
+            df[i] = [re.sub(r"\bProf\b", "Professor", i) for i in df[i]]
+
+    duplicateDFRow = df[df.duplicated()]
+    print('Duplicated Rows: \n', duplicateDFRow)
+    df = df.drop_duplicates()
+    df.reset_index(inplace=True)
+    del df['index']
+
+    return main()
 ```
 
 # Options
