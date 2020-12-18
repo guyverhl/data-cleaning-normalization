@@ -58,7 +58,14 @@ def input_csv():
 df = pd.DataFrame(raw_data)
 check_columns_with_empty_cell()
 ```
-
+Preview of the dataframe can be checked.
+```bas   Title  Surname              Given Name                                           Position            Location   E-mail Address Phone Number
+0  Prof.  GOODWIN                  A. Lin                                               Dean              MW 421     alg25@hku.hk     25698745
+1    Dr.  BRIDGES        Susan   Margaret  Associate Professor\r\nAssistant Dean \r\n(Lea...  MW 545\r\nCPD 1.79  sbridges@hku.hk     25698746
+2    Ms.     CHOW         Mei Ling Jessie                Lecturer\r\n(Experiential Learning)              MW 649   jmlchow@hku.hk     25698747
+3    Ms.      MOK     Wai Fung Candace         Assistant Lecturer\r\n(Experiential Learning)              MW 647    cwfmok@hku.hk     25698748
+4    Mr.     WONG    Nga    Lun   Alan                                     Learning Designer              MW 543   alanwnl@hku.hk    2569-8749
+```
 ## Check Empty Values
 Then the program will look for empty values.
 ```py
