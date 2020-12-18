@@ -5,14 +5,14 @@
         - [Insert File](#insert-file)
     - [Options](#options)
         - [Description](#description)
-        - [Title](#title)
-        - [Version](#version)
-        - [Summary](#summary)
-        - [File](#file)
-        - [Server URL](#server-url)
-        - [Directory](#directory)
-        - [Output Directory](#output-directory)
-        - [Endpoint Description](#endpoint-description)
+        - [Modify Column Title](#modify-column-title)
+        - [Modify cell](#modify-cell)
+        - [Count Values in Selected Column](#count-values-in-selected-column)
+        - [Delete Selected Column](#delete-selected-column)
+        - [Delete Selected Row](#delete-selected-row)
+        - [Call a Cell Value](#call-a-cell-value)
+        - [Output CSV](#output-csv)
+        - [Change Text Case](#change-text-case)
         - [Sorting](#sorting)
         - [Quit](#quit)
     - [Help List](#helplist)
@@ -45,203 +45,128 @@ swagger-testing-001.json is created.
 # Options
 Usage of options
 
-## Description
-To add the description of a mockcase Swagger file, use `-i` to add the string.
-```bash
-$ node wiremock2swagger3.js -i <descrption>
-$ node wiremock2swagger3.js -i "This is the description of swagger 3.0 file"
-```
+## Modify Column Title
+To modify a title in a selected column, use `-M` to change the string.
+```py
+def modify_column_name():
+    global df
 
-The value of description will save in the variable `desc`.
-```js
-var swagger = {
-    "openapi": "3.0.0",
-    "info": {
-      "title": title,
-      "description": desc,
-      "version": version
-    }
- ```
- ```js
-var swagger = {
-    "openapi": "3.0.0",
-    "info": {
-      "title": title,
-      "description": "This is the description of swagger 3.0 file",
-      "version": version
-    }
+    print(df.columns.values)
+    col = input("Name of col that you want to rename: ")
+    if col not in df.columns.values: return modify_column_name()
+    i = input("Updated name: ")
+    df = df.rename(columns={col: i})
+
+    return main()
  ```
 
-## Title
-To add the title of a mockcase Swagger file, use `-t` to add the string.
-```bash
-$ node wiremock2swagger3.js -t <title>
-$ node wiremock2swagger3.js -t "This is the title of swagger 3.0 file"
-```
+## Modify cell
+To modify a value in a selected cell, use `-m` to change the string.
+```py
+def modify_cell():
+    global df
+    print("Input row, column and value to the cell that you want to change")
+    print(df.head(5))
+    row = input("Number of Row: ")
+    col = input("Name of Column: ")
+    if col not in df.columns.values or not row.isnumeric(): return modify_cell()
+    value = input("Value: ")
+    row = int(row)
+    if row > len(df) - 1: return modify_cell()
 
-The value of title will save in the variable `title`.
-```js
-var swagger = {
-    "openapi": "3.0.0",
-    "info": {
-      "title": title,
-      "description": desc,
-      "version": version
-    }
- ```
- ```js
-var swagger = {
-    "openapi": "3.0.0",
-    "info": {
-      "title": "This is the title of swagger 3.0 file",
-      "description": desc,
-      "version": version
-    }
+    df.iloc[row, df.columns.get_loc(col)] = value
+    return main()
  ```
 
-## Version
-To add the version of a mockcase Swagger file, use `-v` to add the string.
-```bash
-$ node wiremock2swagger3.js -v <version>
-$ node wiremock2swagger3.js -v 1.0.0
+## Count Values in Selected Column
+To count the number of values in a specific column, use `-C`.
+```py
+def counting_with_a_column():
+    global df
+    print(df.columns.values)
+    col = input("What columns you want to count? ")
+    if col not in df.columns.values: return counting_with_a_column()
+    selected_column = [i for i in df[col]]
+    selected_column = {i: selected_column.count(i) for i in selected_column}
+    for key, value in selected_column.items():
+        print(key, value)
+    return main()
 ```
 
-The value of version will save in the variable `version`.
-```js
-var swagger = {
-    "openapi": "3.0.0",
-    "info": {
-      "title": title,
-      "description": desc,
-      "version": version
-    }
- ```
- ```js
-var swagger = {
-    "openapi": "3.0.0",
-    "info": {
-      "title": title,
-      "description": desc,
-      "version": 1.0.0
-    }
- ```
+## Delete Selected Column
+Use `-D` to delete a selected column.
+```py
+def remove_selected_column():
+    global df
 
-## Summary
-To add the summary of a specific mockcase, use `-s` to add the string.
-```bash
-$ node wiremock2swagger3.js -s <summary>
-$ node wiremock2swagger3.js -s "This is the summary of swagger 3.0 file"
+    print(df.head(5))
+    i = input("Type order number to select column you want to delete(-a for all): ")
+    if i not in df.columns.values:
+        return remove_selected_column()
+    else:
+        del df[i]
+
+    return main()
 ```
 
-The value of summary will save in the variable `summary`.
-```js
-"paths": {
-  [mockcaseURL]: {
-    [method]: {
-      "parameters": parameters,
-      "summary": summary,
-      "responses": {
-
-      }
-    }
-  }
-}
-```
-```js
-"paths": {
-  [mockcaseURL]: {
-    [method]: {
-      "parameters": parameters,
-      "summary": "This is the summary of swagger 3.0 file",
-      "responses": {
-
-      }
-    }
-  }
-}
+## Delete Selected Row
+Use `-d` to delete a selected row.
+```py
+def remove_selected_row():
+    global df
+    print(df.head(5))
+    row = input("Which rows you want to remove? ")
+    if not row.isnumeric(): return remove_selected_row()
+    row = int(row)
+    if row > len(df) - 1: return remove_selected_row()
+    df.drop([row], axis=0, inplace=True)
+    return main()
 ```
 
-## File
-Use `-f` to insert wiremock json file for converting to swagger3.0.
-```bash
-$ node wiremock2swagger3.js -f <name-of-json>
-$ node wiremock2swagger3.js -f testing.json
+## Call a Cell Value
+Use `-v` to view the value with a selected cell.
+```py
+def receive_cell_value():
+    row = input("Number of Row: ")
+    if not row.isnumeric(): return receive_cell_value()
+    row = int(row)
+    if row > len(df) - 1: return receive_cell_value()
+    col = input("Name of Column: ")
+    if col not in df.columns.values: return receive_cell_value()
+    print(df.loc[row, col])
+    return main()
 ```
 
-## Server URL
-Input situable URL for testing. The default server URL is `http://localhost:8080`.
-```bash
-$ node wiremock2swagger3.js -u <server-url>
-$ node wiremock2swagger3.js -u "http://localhost:8088"
+## Output CSV
+Use `-o` to specify the name of CSV with directory.
+```py
+def to_csv():
+    global df
+    output = input("Name of the new csv file: ")
+    df.to_csv(f'{output}.csv', index=0)
+    print(f'{output}.csv is generated.')
+    main()
 ```
 
-The value of server url will save in the variable `url`.
-```js
-"servers": [
-  {
-    "url": url
-  }
-]
-```
-```js
-"servers": [
-  {
-    "url": "http://localhost:8088"
-  }
-]
-```
+## Change Text Case
+To change the the value to selected textcase within a particular column, use `-t`.
+```py
+def change_text_case():
+    global df
 
-## Directory
-Use `-d` to insert wiremock json folder for converting to swagger3.0.
-```bash
-$ node wiremock2swagger3.js -d <path-of-directory>
-$ node wiremock2swagger3.js -d /Users/abc/tests/
-```
+    print(df.columns.values)
+    col = input("What columns you want to change? ") 
+    if col not in df.columns.values: return change_text_case()
+    
+    val = input("\'u\' for upper, \'l\' for lower or \'t\' for title: ")    
+    if val == 'u': df[col] = [' '.join(i.split()).upper() for i in df[col]]
+    elif val == 'l': df[col] = [' '.join(i.split()).lower() for i in df[col]]
+    elif val == 't': df[col] = [' '.join(i.split()).title() for i in df[col]]
+    else: 
+        print('Invalid input!')
+        return change_text_case()
 
-## Output Directory
-Use `-o` to specify the output directory
-```bash
-$ node wiremock2swagger3.js -o <output-directory>
-$ node wiremock2swagger3.js -o tests/
-```
-
-## Endpoint Description
-To add the endpoint description of a mockcase Swagger file, use `-e` to add the string.
-```bash
-$ node wiremock2swagger3.js -e <endpoint-description>
-$ node wiremock2swagger3.js -e "This is the endpoint of the swagger"
-
-```
-The value of endpoint description will save in the variable `endpointDesc`.
-```js
-"paths": {
-  [mockcaseURL]: {
-    [method]: {
-      "description": endpointDesc,
-      "parameters": parameters,
-      "requestBody": requestBody,
-      "summary": summary,
-      "responses": {
-
-      }
-    }
-  }
-}
-```
-```js
-"paths": {
-  [mockcaseURL]: {
-    [method]: {
-      "description": "This is the endpoint of the swagger",
-      "parameters": parameters,
-      "requestBody": requestBody,
-      "summary": summary,
-      "responses": {
-
-      }
-    }
-  }
-}
+    return main()
 ```
 
 ## Sorting
