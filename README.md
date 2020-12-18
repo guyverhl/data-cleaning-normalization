@@ -4,8 +4,8 @@
     - [Usage](#usage)
         - [Input CSV](#input-csv)
         - [Check Empty Values](#check-empty-values)
-        - [Tidy Dataframe](#tidy-dataframe)
         - [Normalization](#normalization)
+        - [Tidy Dataframe](#tidy-dataframe)
     - [Options](#options)
         - [Modify Column Title](#modify-column-title)
         - [Modify cell](#modify-cell)
@@ -58,12 +58,15 @@ def input_csv(raw_data):
 raw_data = input_csv(raw_data)
 df = pd.DataFrame(raw_data)
 ```
+
 ## Check Empty Values
-Then the program will look for empty values.
+Then the program will look for empty values by calling this function automedically.
+It requires global variable `df`. First the function will search for any `Unnamed` column name, then will scan the values in each column to find any column is containng empty values.
+After that it will return to main function.
 ```py
-def check_columns_with_empty_cell():
-    global df
-    global empty_cols
+check_columns_with_empty_cell(df, empty_cols)
+
+def check_columns_with_empty_cell(df, empty_cols):
 
     df.columns = [' '.join(i.split()) for i in df.columns]
     empty_cols_name = [value for value in df.columns if "Unnamed" in value]
@@ -74,47 +77,18 @@ def check_columns_with_empty_cell():
     return main()
 ```
 
-## Tidy Dataframe
-To delete all excessing spaces and replace data to `Title` textcase, use `-r` to start processing.
-```py
-def tidy_dataframe():
-    global df
-    global column_with_multi_values
-
-    print("Diminish spaces and title values")
-
-    for col in list(df.columns):
-        for row in range(0, len(df)):
-            cell_value = df[col][row]
-            if type(cell_value) == np.int64:
-                cell_value = str(cell_value.item())
-            cell_value_list = list(map(str, cell_value.split("\r\n")))
-            if len(cell_value_list) > 1:
-                if not col in column_with_multi_values:
-                    column_with_multi_values.append(col)
-
-    column_with_single_value = [i for i in df.columns if i not in column_with_multi_values]
-
-    for i in column_with_single_value:
-        # print(type(df[i][0]) == str)
-        if 'Phone' in i:
-            # df[i] = [i.replace("-", "") for i in df[i]]
-            df[i] = [re.sub(r"\b-\b", "", i) for i in df[i]]
-        else:
-            df[i] = [' '.join(i.split()).title() for i in df[i]]
-
-    for i in column_with_multi_values:
-        df[i] = [i.replace("\r\n(", "(") for i in df[i]]
-
-    return normalization(column_with_multi_values)
-```
-
 ## Normalization
 Then the program will normalize dataframe to 1st normal form automedically.
 ```py
-def normalization(column_with_multi_values):
+def normalization():
     global df
-    print("NORMALIZATION")
+    
+    for col in list(df.columns):
+        df[col] = ['('.join(i.split("\r\n(")) for i in df[col]]
+        for row in range(0, len(df)):
+            cell_value = df[col][row]
+            cell_value_list = list(map(str, cell_value.split("\r\n")))
+            if (len(cell_value_list) > 1 and not col in column_with_multi_values): column_with_multi_values.append(col)
 
     for i in range(0, len(column_with_multi_values)):
         selected_column = list(column_with_multi_values[i].split(" "))
@@ -123,22 +97,32 @@ def normalization(column_with_multi_values):
         df = df.apply(lambda x: df[column_with_multi_values[i]].str.split('\r\n').explode())
         df = df.reset_index()
 
-    for i in column_with_multi_values:
-        # print(type(df[i][0]) == str)
-        if 'E-mail' in i:
-            df[i] = [' '.join(i.split()).lower() for i in df[i]]
-        if 'Location' in i:
-            df[i] = [''.join(i.split()).upper() for i in df[i]]
+    print("Normalization is complete")
+    return tidy_dataframe()
+```
+
+## Tidy Dataframe
+To delete all excessing spaces and replace data to `Title` textcase, use `-r` to start processing.
+```py
+def tidy_dataframe():
+    global df
+
+    for i in list(df.columns):
+        if 'E-mail' in i: df[i] = [' '.join(i.split()).lower() for i in df[i]]
+        elif 'Location' in i: df[i] = [''.join(i.split()).upper() for i in df[i]]
+        elif 'Phone' in i: df[i] = [re.sub(r"\b-\b", "", i) for i in df[i]]
         elif 'Position' in i:
             df[i] = [' '.join(i.split()).title() for i in df[i]]
             df[i] = [i.replace("Assoc.", "Associate") for i in df[i]]
             df[i] = [re.sub(r"\bProf\b", "Professor", i) for i in df[i]]
+        else: df[i] = [' '.join(i.split()).title() for i in df[i]]
 
     duplicateDFRow = df[df.duplicated()]
     print('Duplicated Rows: \n', duplicateDFRow)
     df = df.drop_duplicates()
     df.reset_index(inplace=True)
     del df['index']
+    print("Diminish spaces and title values")
 
     return main()
 ```
