@@ -40,7 +40,7 @@ Input CSV file (staff_dir.csv): staff_dir.csv
 ```
 Input parameter is `raw_data`. Try except is used to prevend `No file or directory` error.
 User can terminate the program by typing `\q`.
-Error will be printed and the program will force user to input correct file or directory again.
+Error will be printed and the program will force user to input the correct file or directory again.
 This function will return parameter `raw_data` to create dataframe.
 ```py
 raw_data = None
@@ -61,12 +61,12 @@ df = pd.DataFrame(raw_data)
 
 ## Check Empty Values
 Then the program will look for empty values by calling this function automedically.
-It requires global variable `df`. First the function will search for any `Unnamed` column name, then will scan the values in each column to find any column is containng empty values.
-After that it will return to main function.
+It requires global variable `df`. Firstly, the function will search for any `Unnamed` column name, then will scan the values in each column to find any column is containing empty values.
+After that the conlcusion will be shown and it will return to main function.
 ```py
-check_columns_with_empty_cell(df, empty_cols)
+check_columns_with_empty_cell(df)
 
-def check_columns_with_empty_cell(df, empty_cols):
+def check_columns_with_empty_cell(df):
 
     df.columns = [' '.join(i.split()) for i in df.columns]
     empty_cols_name = [value for value in df.columns if "Unnamed" in value]
@@ -79,6 +79,9 @@ def check_columns_with_empty_cell(df, empty_cols):
 
 ## Normalization
 Then the program will normalize dataframe to first normal form by using `-r` to start.
+Global variable `df` will be used and expend rows containning `\r\n` to ensure each cell only contain one value.
+A list `column_with_multi_values` is formed to save columns with multiple values.
+Then by setting index without the particular column, use `.explode()` to append the row to perform normalization.
 ```py
 def normalization():
     global df
@@ -103,6 +106,12 @@ def normalization():
 
 ## Tidy Dataframe
 Later the program will delete all excessing spaces and replace data automedically.
+Global variable `df` will be used.
+By continuing the `normalization()` function, it will eliminating excessive spaces and change to `title` textcase.
+In `Location`, all strings will change to `upper` textcase.
+In `Phone`, all speical characters will be removed.
+In `Position`, all abbreviations will extend to long format.
+After that, index number will be reset to reproduce as row number.
 ```py
 def tidy_dataframe():
     global df
