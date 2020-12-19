@@ -76,6 +76,12 @@ def check_columns_with_empty_cell(df):
 
     return main()
 ```
+Result in console:
+```bash
+You have 0 columns without naming
+You have 0 columns with empty cells
+prog 
+```
 
 ## Normalization
 Then the program will normalize dataframe to first normal form by using `-r` to start.
@@ -85,6 +91,7 @@ Then by setting index without the particular column, use `.explode()` to append 
 ```py
 def normalization():
     global df
+    column_with_multi_values = []
 
     for col in list(df.columns):
         df[col] = ['('.join(i.split("\r\n(")) for i in df[col]]
@@ -134,6 +141,20 @@ def tidy_dataframe():
     print("Diminish spaces and title values")
 
     return main()
+```
+Result in console:
+```bash
+prog -r
+Normalization is complete
+Duplicated Rows: 
+     Title Surname   Given Name  E-mail Address Phone Number                 Position Location
+15  Prof.    Tang  Akaysha Can   actang@hku.hk     25698751                Professor    MW523
+16  Prof.    Tang  Akaysha Can   actang@hku.hk     25698751                Professor    MW538
+17  Prof.    Tang  Akaysha Can   actang@hku.hk     25698751  Director Of The Nfe Lab    MW523
+18  Prof.    Tang  Akaysha Can   actang@hku.hk     25698751  Director Of The Nfe Lab    MW538
+24    Dr.     Lai         Chun  laichun@hku.hk     25698761      Associate Professor    MW623
+Diminish spaces and title values
+prog
 ```
 
 # Options
