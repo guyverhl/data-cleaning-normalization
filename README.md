@@ -471,7 +471,6 @@ import re
 
 raw_data = None
 empty_cols = []
-column_with_multi_values = []
 
 def input_csv(raw_data):
     try:
@@ -500,27 +499,31 @@ def modify_column_name():
     global df
 
     print(df.columns.values)
-    col = input("Name of col that you want to rename: ")
-    if col not in df.columns.values: return modify_column_name()
+    col = input("Name of column that you want to rename: ")
+    if col == '\q': return main()
+    elif col not in df.columns.values: return modify_column_name()
     i = input("Updated name: ")
     df = df.rename(columns={col: i})
-
+    print(f'"{col}" is changed to "{i}".')
     return main()
 
 
 # -m
 def modify_cell():
     global df
-    print("Input row, column and value to the cell that you want to change")
-    print(df.head(5))
+    print("Input row, column and value to a cell that you want to change")
+    print("Length of dataframe is", len(df) - 1, '\n', df.columns.values)
     row = input("Number of Row: ")
     col = input("Name of Column: ")
-    if col not in df.columns.values or not row.isnumeric(): return modify_cell()
-    value = input("Value: ")
+    if (col == '\q' or row == '\q'): return main()
+    elif col not in df.columns.values or not row.isnumeric(): return modify_cell()
     row = int(row)
     if row > len(df) - 1: return modify_cell()
+    value = input("Value: ")
 
     df.iloc[row, df.columns.get_loc(col)] = value
+    print(f'The value of row {row} in "{col}" is changed to "{value}".')
+
     return main()
 
 
@@ -528,12 +531,13 @@ def modify_cell():
 def remove_selected_column():
     global df
 
-    print(df.head(5))
-    i = input("Type order number to select column you want to delete(-a for all): ")
-    if i not in df.columns.values:
-        return remove_selected_column()
-    else:
-        del df[i]
+    print(df.columns.values)
+    i = input("Type the name of column to delete: ")
+    if i == '\q': return main()
+    elif i not in df.columns.values: return remove_selected_column()
+    else: del df[i]
+
+    print(f'"{i}" is removed.')
 
     return main()
 
@@ -542,8 +546,9 @@ def remove_selected_column():
 def counting_with_a_column():
     global df
     print(df.columns.values)
-    col = input("What columns you want to count? ")
-    if col not in df.columns.values: return counting_with_a_column()
+    col = input("Select a column to count: ")
+    if col == '\q': return main()
+    elif col not in df.columns.values: return counting_with_a_column()
     selected_column = [i for i in df[col]]
     selected_column = {i: selected_column.count(i) for i in selected_column}
     for key, value in selected_column.items():
@@ -554,19 +559,23 @@ def counting_with_a_column():
 # -d
 def remove_selected_row():
     global df
-    print(df.head(5))
-    row = input("Which rows you want to remove? ")
-    if not row.isnumeric(): return remove_selected_row()
+    print(len(df))
+    row = input("Number of row to remove: ")
+    if row == '\q': return main()
+    elif not row.isnumeric(): return remove_selected_row()
     row = int(row)
     if row > len(df) - 1: return remove_selected_row()
     df.drop([row], axis=0, inplace=True)
+    print(f'Row {row} is removed.')
+    
     return main()
 
 
 # -r
 def normalization():
     global df
-
+    column_with_multi_values = []
+    
     for col in list(df.columns):
         df[col] = ['('.join(i.split("\r\n(")) for i in df[col]]
         for row in range(0, len(df)):
@@ -611,13 +620,19 @@ def tidy_dataframe():
 
 # -v
 def receive_cell_value():
+    print('Length of the row is', len(df) - 1)
     row = input("Number of Row: ")
-    if not row.isnumeric(): return receive_cell_value()
+    if row == '\q': return main()
+    elif not row.isnumeric(): return receive_cell_value()
     row = int(row)
     if row > len(df) - 1: return receive_cell_value()
+    
+    print(df.columns.values)
     col = input("Name of Column: ")
-    if col not in df.columns.values: return receive_cell_value()
-    print(df.loc[row, col])
+    if col == '\q': return main()
+    elif col not in df.columns.values: return receive_cell_value()
+    print('The value is', df.loc[row, col])
+
     return main()
 
 
@@ -625,27 +640,31 @@ def receive_cell_value():
 def to_csv():
     global df
     output = input("Name of the new csv file: ")
+    if output == '\q': return main()
     df.to_csv(f'{output}.csv', index=0)
     print(f'{output}.csv is generated.')
-    main()
+    
+    return main()
 
 # -s
 def sort_by_column():
     global df
 
     print(df.columns.values)
-    col = input("What columns you want to sort? ") 
-    if col not in df.columns.values: return sort_by_column()
-    val = input("\'a\' for ascending or \'d\' for descending: ")
-    if val == 'd': df = df.sort_values(by=[col], ascending = False)
-    elif val == 'a': df = df.sort_values(by=[col], ascending = True)
+    col = input("Name of column to sort: ")
+    if col == '\q': return main()
+    elif col not in df.columns.values: return sort_by_column()
+    val = input("\'as\' for ascending or \'de\' for descending: ")
+    if val == '\q': return main()
+    elif val == 'de': df = df.sort_values(by=[col], ascending = False)
+    elif val == 'as': df = df.sort_values(by=[col], ascending = True)
     else: 
         print('Invalid input!')
         return sort_by_column()
     
     df.reset_index(inplace=True)
     del df['index']
-
+    print(f'The order of "{col}" is changed.')
     return main()
 
 # -t
@@ -653,22 +672,25 @@ def change_text_case():
     global df
 
     print(df.columns.values)
-    col = input("What columns you want to change? ") 
-    if col not in df.columns.values: return change_text_case()
+    col = input("Name of column to change: ") 
+    if col == '\q': return main()
+    elif col not in df.columns.values: return change_text_case()
     
-    val = input("\'u\' for upper, \'l\' for lower or \'t\' for title: ")    
-    if val == 'u': df[col] = [' '.join(i.split()).upper() for i in df[col]]
-    elif val == 'l': df[col] = [' '.join(i.split()).lower() for i in df[col]]
-    elif val == 't': df[col] = [' '.join(i.split()).title() for i in df[col]]
+    val = input("\'up\' for upper, \'lo\' for lower or \'ti\' for title: ")
+    if val == '\q': return main()    
+    elif val == 'up': df[col] = [' '.join(i.split()).upper() for i in df[col]]
+    elif val == 'lo': df[col] = [' '.join(i.split()).lower() for i in df[col]]
+    elif val == 'ti': df[col] = [' '.join(i.split()).title() for i in df[col]]
     else: 
         print('Invalid input!')
         return change_text_case()
 
+    print(f'The textcase of "{col}" is changed.')
     return main()
 
 # \q
 def quit_prog():
-    print("Thank and GoodBye")
+    print("Thank you and GoodBye")
     exit()
 
 
@@ -719,4 +741,5 @@ print("Welcome to the UI! Type '-h' or '--help' to know the command of the progr
 raw_data = input_csv(raw_data)
 df = pd.DataFrame(raw_data)
 check_columns_with_empty_cell(df, empty_cols)
+
 ```
