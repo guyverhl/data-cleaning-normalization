@@ -29,7 +29,7 @@ pip3 install pandas
 # Usage
 The program is processing the step of data cleaning. It will detect any spaces and empty values, then transform to first normal formal utilizing normalization. After that user can reproduce a cleaned version of the CSV file.
 ```bash
-python3 ch4_individual_ex.py
+python3 individual_ex.py
 ```
 
 ## Input CSV
@@ -441,7 +441,7 @@ The order of "Surname" is changed.
 Use `\q` to exit the program.
 ```py
 def quit_prog():
-    print("Thank you and GoodBye")
+    print("Thank you and Goodbye")
     exit()
 ```
 
@@ -470,7 +470,6 @@ import numpy as np
 import re
 
 raw_data = None
-empty_cols = []
 
 def input_csv(raw_data):
     try:
@@ -483,7 +482,7 @@ def input_csv(raw_data):
     else:
         return raw_data
 
-def check_columns_with_empty_cell(df, empty_cols):
+def check_columns_with_empty_cell(df):
 
     df.columns = [' '.join(i.split()) for i in df.columns]
     empty_cols_name = [value for value in df.columns if "Unnamed" in value]
@@ -492,7 +491,6 @@ def check_columns_with_empty_cell(df, empty_cols):
     print("You have", len(empty_cols), "columns with empty cells")
 
     return main()
-
 
 # -M
 def modify_column_name():
@@ -505,12 +503,13 @@ def modify_column_name():
     i = input("Updated name: ")
     df = df.rename(columns={col: i})
     print(f'"{col}" is changed to "{i}".')
-    return main()
 
+    return main()
 
 # -m
 def modify_cell():
     global df
+
     print("Input row, column and value to a cell that you want to change")
     print("Length of dataframe is", len(df) - 1, '\n', df.columns.values)
     row = input("Number of Row: ")
@@ -526,7 +525,6 @@ def modify_cell():
 
     return main()
 
-
 # -D
 def remove_selected_column():
     global df
@@ -541,10 +539,10 @@ def remove_selected_column():
 
     return main()
 
-
 # -C
 def counting_with_a_column():
     global df
+
     print(df.columns.values)
     col = input("Select a column to count: ")
     if col == '\q': return main()
@@ -553,12 +551,13 @@ def counting_with_a_column():
     selected_column = {i: selected_column.count(i) for i in selected_column}
     for key, value in selected_column.items():
         print(key, value)
-    return main()
 
+    return main()
 
 # -d
 def remove_selected_row():
     global df
+
     print(len(df))
     row = input("Number of row to remove: ")
     if row == '\q': return main()
@@ -570,7 +569,6 @@ def remove_selected_row():
     
     return main()
 
-
 # -r
 def normalization():
     global df
@@ -580,7 +578,6 @@ def normalization():
         df[col] = ['('.join(i.split("\r\n(")) for i in df[col]]
         for row in range(0, len(df)):
             cell_value = df[col][row]
-            # if type(cell_value) == np.int64: cell_value = str(cell_value.item())
             cell_value_list = list(map(str, cell_value.split("\r\n")))
             if (len(cell_value_list) > 1 and not col in column_with_multi_values): column_with_multi_values.append(col)
 
@@ -598,8 +595,6 @@ def tidy_dataframe():
     global df
 
     for i in list(df.columns):
-        # print(type(df[i][0]) == str)
-        # df[i] = [i.replace("-", "") for i in df[i]]
         if 'E-mail' in i: continue
         elif 'Location' in i: df[i] = [''.join(i.split()).upper() for i in df[i]]
         elif 'Phone' in i: df[i] = [re.sub(r"[^A-Za-z0-9]+", "", i) for i in df[i]]
@@ -635,10 +630,10 @@ def receive_cell_value():
 
     return main()
 
-
 # -o
 def to_csv():
     global df
+
     output = input("Name of the new csv file: ")
     if output == '\q': return main()
     df.to_csv(f'{output}.csv', index=0)
@@ -665,6 +660,7 @@ def sort_by_column():
     df.reset_index(inplace=True)
     del df['index']
     print(f'The order of "{col}" is changed.')
+
     return main()
 
 # -t
@@ -690,9 +686,8 @@ def change_text_case():
 
 # \q
 def quit_prog():
-    print("Thank you and GoodBye")
+    print("Thank you and Goodbye")
     exit()
-
 
 # -h
 def help_list():
@@ -711,10 +706,9 @@ def help_list():
 
     return main()
 
-
-
 def main():
     global df
+
     usr_input = input('prog ')
     if usr_input == '-p' or usr_input == '--print':
         print(df)
@@ -735,11 +729,9 @@ def main():
         print("Invalid input. Please type again.")
         main()
 
-
 # Start
-print("Welcome to the UI! Type '-h' or '--help' to know the command of the program.")
+print("Welcome to the data cleaning program! Type '-h' or '--help' to know the command of the program.")
 raw_data = input_csv(raw_data)
 df = pd.DataFrame(raw_data)
-check_columns_with_empty_cell(df, empty_cols)
-
+check_columns_with_empty_cell(df)
 ```
