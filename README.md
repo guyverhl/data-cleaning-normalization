@@ -7,6 +7,7 @@
         - [Normalization](#normalization)
         - [Tidy Dataframe](#tidy-dataframe)
     - [Options](#options)
+        - [Print Dataframe](#print-dataframe)
         - [Modify Column Title](#modify-column-title)
         - [Modify cell](#modify-cell)
         - [Count Values in Selected Column](#count-values-in-selected-column)
@@ -157,6 +158,15 @@ Diminish spaces and title values
 
 # Options
 Usage of options
+
+## Print Dataframe
+To print the current dataframe, use `-p` or `--print`.
+Then it will return to main function.
+```py
+if usr_input == '-p' or usr_input == '--print':
+    print(df)
+    main()
+```
 
 ## Modify Column Title
 To modify a title in a selected column, use `-M` or `--modify_col_name` to change the string.
