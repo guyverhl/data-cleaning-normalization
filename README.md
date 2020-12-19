@@ -78,11 +78,11 @@ def check_columns_with_empty_cell(df, empty_cols):
 ```
 
 ## Normalization
-Then the program will normalize dataframe to 1st normal form automedically.
+Then the program will normalize dataframe to first normal form by using `-r` to start.
 ```py
 def normalization():
     global df
-    
+
     for col in list(df.columns):
         df[col] = ['('.join(i.split("\r\n(")) for i in df[col]]
         for row in range(0, len(df)):
@@ -102,17 +102,17 @@ def normalization():
 ```
 
 ## Tidy Dataframe
-To delete all excessing spaces and replace data to `Title` textcase, use `-r` to start processing.
+Later the program will delete all excessing spaces and replace data automedically.
 ```py
 def tidy_dataframe():
     global df
 
     for i in list(df.columns):
-        if 'E-mail' in i: df[i] = [' '.join(i.split()).lower() for i in df[i]]
+        if 'E-mail' in i: continue
         elif 'Location' in i: df[i] = [''.join(i.split()).upper() for i in df[i]]
-        elif 'Phone' in i: df[i] = [re.sub(r"\b-\b", "", i) for i in df[i]]
+        elif 'Phone' in i: df[i] = [re.sub(r"[^A-Za-z0-9]+", "", i) for i in df[i]]
         elif 'Position' in i:
-            df[i] = [' '.join(i.split()).title() for i in df[i]]
+            df[i] = ['('.join(i.split(' (')).title() for i in df[i]]
             df[i] = [i.replace("Assoc.", "Associate") for i in df[i]]
             df[i] = [re.sub(r"\bProf\b", "Professor", i) for i in df[i]]
         else: df[i] = [' '.join(i.split()).title() for i in df[i]]
@@ -312,21 +312,18 @@ raw_data = None
 empty_cols = []
 column_with_multi_values = []
 
-def input_csv():
-    global raw_data
+def input_csv(raw_data):
     try:
         csv_file = input("Input CSV file (staff_dir.csv): ")
         if csv_file == '\q': exit()
         raw_data = pd.read_csv(csv_file)
     except Exception as e:
         print(e)
-        return input_csv()
+        return input_csv(raw_data)
     else:
-        return
-        
-def check_columns_with_empty_cell():
-    global df
-    global empty_cols
+        return raw_data
+
+def check_columns_with_empty_cell(df, empty_cols):
 
     df.columns = [' '.join(i.split()) for i in df.columns]
     empty_cols_name = [value for value in df.columns if "Unnamed" in value]
@@ -406,41 +403,16 @@ def remove_selected_row():
 
 
 # -r
-def tidy_dataframe():
+def normalization():
     global df
-    global column_with_multi_values
-
-    print("Diminish spaces and title values")
 
     for col in list(df.columns):
+        df[col] = ['('.join(i.split("\r\n(")) for i in df[col]]
         for row in range(0, len(df)):
             cell_value = df[col][row]
-            if type(cell_value) == np.int64:
-                cell_value = str(cell_value.item())
+            # if type(cell_value) == np.int64: cell_value = str(cell_value.item())
             cell_value_list = list(map(str, cell_value.split("\r\n")))
-            if len(cell_value_list) > 1:
-                if not col in column_with_multi_values:
-                    column_with_multi_values.append(col)
-
-    column_with_single_value = [i for i in df.columns if i not in column_with_multi_values]
-
-    for i in column_with_single_value:
-        # print(type(df[i][0]) == str)
-        if 'Phone' in i:
-            # df[i] = [i.replace("-", "") for i in df[i]]
-            df[i] = [re.sub(r"\b-\b", "", i) for i in df[i]]
-        else:
-            df[i] = [' '.join(i.split()).title() for i in df[i]]
-
-    for i in column_with_multi_values:
-        df[i] = [i.replace("\r\n(", "(") for i in df[i]]
-
-    return normalization(column_with_multi_values)
-
-
-def normalization(column_with_multi_values):
-    global df
-    print("NORMALIZATION")
+            if (len(cell_value_list) > 1 and not col in column_with_multi_values): column_with_multi_values.append(col)
 
     for i in range(0, len(column_with_multi_values)):
         selected_column = list(column_with_multi_values[i].split(" "))
@@ -449,25 +421,32 @@ def normalization(column_with_multi_values):
         df = df.apply(lambda x: df[column_with_multi_values[i]].str.split('\r\n').explode())
         df = df.reset_index()
 
-    for i in column_with_multi_values:
+    print("Normalization is complete")
+    return tidy_dataframe()
+
+def tidy_dataframe():
+    global df
+
+    for i in list(df.columns):
         # print(type(df[i][0]) == str)
-        if 'E-mail' in i:
-            df[i] = [' '.join(i.split()).lower() for i in df[i]]
-        if 'Location' in i:
-            df[i] = [''.join(i.split()).upper() for i in df[i]]
+        # df[i] = [i.replace("-", "") for i in df[i]]
+        if 'E-mail' in i: continue
+        elif 'Location' in i: df[i] = [''.join(i.split()).upper() for i in df[i]]
+        elif 'Phone' in i: df[i] = [re.sub(r"[^A-Za-z0-9]+", "", i) for i in df[i]]
         elif 'Position' in i:
-            df[i] = [' '.join(i.split()).title() for i in df[i]]
+            df[i] = ['('.join(i.split(' (')).title() for i in df[i]]
             df[i] = [i.replace("Assoc.", "Associate") for i in df[i]]
             df[i] = [re.sub(r"\bProf\b", "Professor", i) for i in df[i]]
+        else: df[i] = [' '.join(i.split()).title() for i in df[i]]
 
     duplicateDFRow = df[df.duplicated()]
     print('Duplicated Rows: \n', duplicateDFRow)
     df = df.drop_duplicates()
     df.reset_index(inplace=True)
     del df['index']
+    print("Diminish spaces and title values")
 
     return main()
-
 
 # -v
 def receive_cell_value():
@@ -553,7 +532,6 @@ def help_list():
 
 def main():
     global df
-
     usr_input = input('prog ')
     if usr_input == '-p' or usr_input == '--print':
         print(df)
@@ -565,7 +543,7 @@ def main():
     elif usr_input == '-d' or usr_input == '--remove_row': remove_selected_row()
     elif usr_input == '-v' or usr_input == '--view_value': receive_cell_value()
     elif usr_input == '-o' or usr_input == '--gen_csv': to_csv()
-    elif usr_input == '-r' or usr_input == '--run': tidy_dataframe()
+    elif usr_input == '-r' or usr_input == '--run': normalization()
     elif usr_input == '-s' or usr_input == '--sort': sort_by_column()
     elif usr_input == '-t' or usr_input == '--text_case': change_text_case()
     elif usr_input == '\q' or usr_input == '--quit': quit_prog()
@@ -577,7 +555,7 @@ def main():
 
 # Start
 print("Welcome to the UI! Type '-h' or '--help' to know the command of the program.")
-input_csv()
+raw_data = input_csv(raw_data)
 df = pd.DataFrame(raw_data)
-check_columns_with_empty_cell()
+check_columns_with_empty_cell(df, empty_cols)
 ```
