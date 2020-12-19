@@ -86,7 +86,7 @@ prog
 
 ## Normalization
 Then the program will normalize dataframe to first normal form by using `-r` to start.
-Global variable `df` will be used and expend rows containing `\r\n` to ensure each cell only contain one value.
+Global variable `df` will be used to expend rows containing `\r\n` to ensure each cell only contain one value.
 A list `column_with_multi_values` is formed to save columns with multiple values.
 Then by setting index without the particular column, use `.explode()` to append the row to perform normalization.
 ```py
@@ -114,7 +114,6 @@ def normalization():
 
 ## Tidy Dataframe
 Later the program will delete all excessing spaces and replace data automatically.
-Global variable `df` will be used.
 By continuing the `normalization()` function, it will eliminate excessive spaces and change to `title` textcase.
 In `Location`, all strings will change to `upper` textcase.
 In `Phone`, all special characters will be removed.
@@ -163,8 +162,7 @@ Usage of options
 
 ## Modify Column Title
 To modify a title in a selected column, use `-M` to change the string.
-Global variable `df` will be used.
-The local variable `col` will be formed by asking the user to type the name of a column that want to change.
+The local variable `col` will be formed by asking the user to type the name of a column that want to change, and `i` will record the changed name.
 If else ensure user to input correct column name, otherwise will ask for input again.
 User can return to the main function by typing `\q`.
 ```py
@@ -173,7 +171,7 @@ def modify_column_name():
 
     print(df.columns.values)
     col = input("Name of column that you want to rename: ")
-    if col == '\q': main()
+    if col == '\q': return main()
     elif col not in df.columns.values: return modify_column_name()
     i = input("Updated name: ")
     df = df.rename(columns={col: i})
@@ -192,140 +190,258 @@ Updated name: Rename-Title
 
 ## Modify cell
 To modify a value in a selected cell, use `-m` to change the string.
+The local variable `col`, `row` and `value` save user's input to locate the specific cell, then change to the value in `value`.
+If else can prevent the user from inputting incorrect column name and row that exceeds the total number of row in the dataframe, and restrict the user to input again.
+User can return to the main function by typing `\q`.
 ```py
 def modify_cell():
     global df
-    print("Input row, column and value to the cell that you want to change")
-    print(df.head(5))
+    print("Input row, column and value to a cell that you want to change")
+    print("Length of dataframe is", len(df) - 1, '\n', df.columns.values)
     row = input("Number of Row: ")
     col = input("Name of Column: ")
-    if col not in df.columns.values or not row.isnumeric(): return modify_cell()
-    value = input("Value: ")
+    if (col == '\q' or row == '\q'): return main()
+    elif col not in df.columns.values or not row.isnumeric(): return modify_cell()
     row = int(row)
     if row > len(df) - 1: return modify_cell()
+    value = input("Value: ")
 
     df.iloc[row, df.columns.get_loc(col)] = value
+    print(f'The value of row {row} in "{col}" is changed to "{value}".')
+
     return main()
  ```
+ Result in console:
+```bash
+prog -m
+Input row, column and value to a cell that you want to change
+Length of dataframe is 16
+ ['Title' 'Surname' 'Given Name' 'Position' 'Location' 'E-mail Address'
+ 'Phone Number']
+Number of Row: 1
+Name of Column: Title
+Value: Mr.
+The value of row 1 in "Title" is changed to "Mr.".
+```
 
 ## Count Values in Selected Column
 To count the number of values in a specific column, use `-C`.
+The local variable `col` save the selected column from the user and calculate the number of each value.
+If else can prevent the user from inputting incorrect column name, and restrict the user to input again.
+Then print in the console.
+User can return to the main function by typing `\q`.
 ```py
 def counting_with_a_column():
     global df
     print(df.columns.values)
-    col = input("What columns you want to count? ")
-    if col not in df.columns.values: return counting_with_a_column()
+    col = input("Select a column to count: ")
+    if col == '\q': return main()
+    elif col not in df.columns.values: return counting_with_a_column()
     selected_column = [i for i in df[col]]
     selected_column = {i: selected_column.count(i) for i in selected_column}
     for key, value in selected_column.items():
         print(key, value)
     return main()
 ```
+Result in console:
+```bash
+prog -C
+['Title' 'Surname' 'Given Name' 'E-mail Address' 'Phone Number' 'Position'
+ 'Location']
+Select a column to count: Title
+Prof. 5
+Dr. 14
+Ms. 2
+Mr. 1
+```
 
 ## Delete Selected Column
 Use `-D` to delete a selected column.
+The local variable `i` save the name of column from the user to delete.
+If else can prevent the user from inputting incorrect column name, and restrict the user to input again.
+User can return to the main function by typing `\q`.
 ```py
 def remove_selected_column():
     global df
 
-    print(df.head(5))
-    i = input("Type order number to select column you want to delete(-a for all): ")
-    if i not in df.columns.values:
-        return remove_selected_column()
-    else:
-        del df[i]
+    print(df.columns.values)
+    i = input("Type the name of column to delete: ")
+    if i == '\q': return main()
+    elif i not in df.columns.values: return remove_selected_column()
+    else: del df[i]
+
+    print(f'"{i}" is removed.')
 
     return main()
+```
+Result in console:
+```bash
+prog -D
+['Title' 'Surname' 'Given Name' 'Position' 'Location' 'E-mail Address'
+ 'Phone Number']
+Type the name of column to delete: Title
+"Title" is removed.
 ```
 
 ## Delete Selected Row
 Use `-d` to delete a selected row.
+The local variable `row` save the number of row from the user to delete.
+If else can prevent the user from inputting incorrect number of row, and restrict the user to input again.
+User can return to the main function by typing `\q`.
 ```py
 def remove_selected_row():
     global df
-    print(df.head(5))
-    row = input("Which rows you want to remove? ")
-    if not row.isnumeric(): return remove_selected_row()
+    print(len(df))
+    row = input("Number of row to remove: ")
+    if row == '\q': return main()
+    elif not row.isnumeric(): return remove_selected_row()
     row = int(row)
     if row > len(df) - 1: return remove_selected_row()
     df.drop([row], axis=0, inplace=True)
+    print(f'Row {row} is removed.')
+
     return main()
+```
+Result in console:
+```bash
+prog -d
+17
+Number of row to remove: 4 
+Row 4 is removed.
 ```
 
 ## Call a Cell Value
 Use `-v` to view the value with a selected cell.
+The local variable `row` and `col` save the input from the user to view a cell value.
+If else can prevent the user from inputting incorrect number of row and the name of column, and restrict the user to input again.
+User can return to the main function by typing `\q`.
 ```py
 def receive_cell_value():
+    print('Length of the row is', len(df) - 1)
     row = input("Number of Row: ")
-    if not row.isnumeric(): return receive_cell_value()
+    if row == '\q': return main()
+    elif not row.isnumeric(): return receive_cell_value()
     row = int(row)
     if row > len(df) - 1: return receive_cell_value()
+    
+    print(df.columns.values)
     col = input("Name of Column: ")
-    if col not in df.columns.values: return receive_cell_value()
-    print(df.loc[row, col])
+    if col == '\q': return main()
+    elif col not in df.columns.values: return receive_cell_value()
+    print('The value is', df.loc[row, col])
+
     return main()
+```
+Result in console:
+```bash
+prog -v
+Length of the row is 16
+Number of Row: 4
+['Title' 'Surname' 'Given Name' 'Position' 'Location' 'E-mail Address'
+ 'Phone Number']
+Name of Column: Title
+The value is Mr.
 ```
 
 ## Output CSV
-Use `-o` to specify the name of CSV with directory.
+Use `-o` to specify the name of CSV and form a new CSV file.
+The local variable `output` save the name of the new CSV file.
+User can return to the main function by typing `\q`.
 ```py
 def to_csv():
     global df
     output = input("Name of the new csv file: ")
+    if output == '\q': return main()
     df.to_csv(f'{output}.csv', index=0)
     print(f'{output}.csv is generated.')
-    main()
+
+    return main()
+```
+Result in console:
+```bash
+prog -o
+Name of the new csv file: output
+output.csv is generated.
 ```
 
 ## Change Text Case
 To change the the value to selected textcase within a particular column, use `-t`.
+The local variable `col` and `val` save the name of column and selected textcase.
+If else can prevent the user from inputting incorrect name of column and type of textcase, and restrict the user to input again.
+User can return to the main function by typing `\q`.
 ```py
 def change_text_case():
     global df
 
     print(df.columns.values)
-    col = input("What columns you want to change? ") 
-    if col not in df.columns.values: return change_text_case()
+    col = input("Name of column to change: ") 
+    if col == '\q': return main()
+    elif col not in df.columns.values: return change_text_case()
     
-    val = input("\'u\' for upper, \'l\' for lower or \'t\' for title: ")    
-    if val == 'u': df[col] = [' '.join(i.split()).upper() for i in df[col]]
-    elif val == 'l': df[col] = [' '.join(i.split()).lower() for i in df[col]]
-    elif val == 't': df[col] = [' '.join(i.split()).title() for i in df[col]]
+    val = input("\'up\' for upper, \'lo\' for lower or \'ti\' for title: ")
+    if val == '\q': return main()    
+    elif val == 'up': df[col] = [' '.join(i.split()).upper() for i in df[col]]
+    elif val == 'lo': df[col] = [' '.join(i.split()).lower() for i in df[col]]
+    elif val == 'ti': df[col] = [' '.join(i.split()).title() for i in df[col]]
     else: 
         print('Invalid input!')
         return change_text_case()
 
+    print(f'The textcase of "{col}" is changed.')
     return main()
+```
+Result of console:
+```bash
+prog -t
+['Title' 'Surname' 'Given Name' 'E-mail Address' 'Phone Number' 'Position'
+ 'Location']
+Name of column to change: Title
+'up' for upper, 'lo' for lower or 'ti' for title: up
+The textcase of "Title" is changed.
 ```
 
 ## Sorting
 Use `-s` to sort the dataframe by selected column.
+The local variable `col` and `val` save the name of column and selected pattern of sorting.
+If else can prevent the user from inputting incorrect name of column and type of pattern, and restrict the user to input again.
+User can return to the main function by typing `\q`.
+The index will reset to generate new row numbers series.
 ```py
 def sort_by_column():
     global df
 
     print(df.columns.values)
-    col = input("What columns you want to sort? ") 
-    if col not in df.columns.values: return sort_by_column()
-    val = input("\'a\' for ascending or \'d\' for descending: ")
-    if val == 'd': df = df.sort_values(by=[col], ascending = False)
-    elif val == 'a': df = df.sort_values(by=[col], ascending = True)
+    col = input("Name of column to sort: ")
+    if col == '\q': return main()
+    elif col not in df.columns.values: return sort_by_column()
+    val = input("\'as\' for ascending or \'de\' for descending: ")
+    if val == '\q': return main()
+    elif val == 'de': df = df.sort_values(by=[col], ascending = False)
+    elif val == 'as': df = df.sort_values(by=[col], ascending = True)
     else: 
         print('Invalid input!')
         return sort_by_column()
     
     df.reset_index(inplace=True)
     del df['index']
-
+    print(f'The order of "{col}" is changed.')
     return main()
+```
+Result in console:
+```bash
+prog -s
+['Title' 'Surname' 'Given Name' 'E-mail Address' 'Phone Number' 'Position'
+ 'Location']
+Name of column to sort: Surname
+'as' for ascending or 'de' for descending: as
+The order of "Surname" is changed.
 ```
 
 ## Quit
 Use `\q` to exit the program.
 ```py
 def quit_prog():
-    print("Thank and GoodBye")
+    print("Thank you and GoodBye")
     exit()
 ```
 
