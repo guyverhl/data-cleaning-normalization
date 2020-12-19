@@ -81,11 +81,10 @@ Result in console:
 ```bash
 You have 0 columns without naming
 You have 0 columns with empty cells
-prog 
 ```
 
 ## Normalization
-Then the program will normalize dataframe to first normal form by using `-r` to start.
+Then the program will normalize dataframe to first normal form by using `-r` or `--run` to start.
 Global variable `df` will be used to expend rows containing `\r\n` to ensure each cell only contain one value.
 A list `column_with_multi_values` is formed to save columns with multiple values.
 Then by setting index without the particular column, use `.explode()` to append the row to perform normalization.
@@ -154,14 +153,13 @@ Duplicated Rows:
 18  Prof.    Tang  Akaysha Can   actang@hku.hk     25698751  Director Of The Nfe Lab    MW538
 24    Dr.     Lai         Chun  laichun@hku.hk     25698761      Associate Professor    MW623
 Diminish spaces and title values
-prog
 ```
 
 # Options
 Usage of options
 
 ## Modify Column Title
-To modify a title in a selected column, use `-M` to change the string.
+To modify a title in a selected column, use `-M` or `--modify_col_name` to change the string.
 The local variable `col` will be formed by asking the user to type the name of a column that want to change, and `i` will record the changed name.
 If else ensure user to input correct column name, otherwise will ask for input again.
 User can return to the main function by typing `\q`.
@@ -189,7 +187,7 @@ Updated name: Rename-Title
  ```
 
 ## Modify cell
-To modify a value in a selected cell, use `-m` to change the string.
+To modify a value in a selected cell, use `-m` or `--modify_cell` to change the string.
 The local variable `col`, `row` and `value` save user's input to locate the specific cell, then change to the value in `value`.
 If else can prevent the user from inputting incorrect column name and row that exceeds the total number of row in the dataframe, and restrict the user to input again.
 User can return to the main function by typing `\q`.
@@ -225,7 +223,7 @@ The value of row 1 in "Title" is changed to "Mr.".
 ```
 
 ## Count Values in Selected Column
-To count the number of values in a specific column, use `-C`.
+To count the number of values in a specific column, use `-C` or `--count_column`.
 The local variable `col` save the selected column from the user and calculate the number of each value.
 If else can prevent the user from inputting incorrect column name, and restrict the user to input again.
 Then print in the console.
@@ -256,7 +254,7 @@ Mr. 1
 ```
 
 ## Delete Selected Column
-Use `-D` to delete a selected column.
+Use `-D` or `--remove_col` to delete a selected column.
 The local variable `i` save the name of column from the user to delete.
 If else can prevent the user from inputting incorrect column name, and restrict the user to input again.
 User can return to the main function by typing `\q`.
@@ -284,7 +282,7 @@ Type the name of column to delete: Title
 ```
 
 ## Delete Selected Row
-Use `-d` to delete a selected row.
+Use `-d` or `--remove_row` to delete a selected row.
 The local variable `row` save the number of row from the user to delete.
 If else can prevent the user from inputting incorrect number of row, and restrict the user to input again.
 User can return to the main function by typing `\q`.
@@ -311,7 +309,7 @@ Row 4 is removed.
 ```
 
 ## Call a Cell Value
-Use `-v` to view the value with a selected cell.
+Use `-v` or `--view_value` to view the value with a selected cell.
 The local variable `row` and `col` save the input from the user to view a cell value.
 If else can prevent the user from inputting incorrect number of row and the name of column, and restrict the user to input again.
 User can return to the main function by typing `\q`.
@@ -344,7 +342,7 @@ The value is Mr.
 ```
 
 ## Output CSV
-Use `-o` to specify the name of CSV and form a new CSV file.
+Use `-o` or `--gen_csv` to specify the name of CSV and form a new CSV file.
 The local variable `output` save the name of the new CSV file.
 User can return to the main function by typing `\q`.
 ```py
@@ -365,7 +363,7 @@ output.csv is generated.
 ```
 
 ## Change Text Case
-To change the the value to selected textcase within a particular column, use `-t`.
+To change the the value to selected textcase within a particular column, use `-t` or `--text_case`.
 The local variable `col` and `val` save the name of column and selected textcase.
 If else can prevent the user from inputting incorrect name of column and type of textcase, and restrict the user to input again.
 User can return to the main function by typing `\q`.
@@ -401,7 +399,7 @@ The textcase of "Title" is changed.
 ```
 
 ## Sorting
-Use `-s` to sort the dataframe by selected column.
+Use `-s` or `--sort` to sort the dataframe by selected column.
 The local variable `col` and `val` save the name of column and selected pattern of sorting.
 If else can prevent the user from inputting incorrect name of column and type of pattern, and restrict the user to input again.
 User can return to the main function by typing `\q`.
@@ -438,7 +436,7 @@ The order of "Surname" is changed.
 ```
 
 ## Quit
-Use `\q` to exit the program.
+Use `\q` or `--quit` to exit the program.
 ```py
 def quit_prog():
     print("Thank you and Goodbye")
