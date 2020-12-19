@@ -19,6 +19,7 @@
         - [Sorting](#sorting)
         - [Quit](#quit)
     - [Help List](#helplist)
+    - [Flow Chart](#flow-chart)
     - [Appendix](#appendix)
 
 # Requirement
@@ -469,9 +470,10 @@ The help information is generated based on the information commander already kno
 \q,   --quit               Quit the program              
 -h,   --help               Show command list
 ```
+# Flow Chart
+![alt text](flow-chart.png "flow-chart")
 
 # Appendix 
-![alt text](flow-chart.png "flow-chart")
 ```py
 import pandas as pd
 import numpy as np
