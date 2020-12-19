@@ -27,21 +27,18 @@ pip3 install pandas
 ```
 
 # Usage
-The program is processing data cleaning. It will detect any spaces and empty values, then transform to first normal formal from normalization. After that user can reproduce a cleaned version of CSV file.
+The program is processing the step of data cleaning. It will detect any spaces and empty values, then transform to first normal formal utilizing normalization. After that user can reproduce a cleaned version of the CSV file.
 ```bash
 python3 ch4_individual_ex.py
 ```
 
 ## Input CSV
 First input CSV for processing.
-`CSV name` in current folder with program or `absolute path` is accessable.
-```bash
-Input CSV file (staff_dir.csv): staff_dir.csv
-```
-Input parameter is `raw_data`. Try except is used to prevend `No file or directory` error.
+`CSV name` in the current folder with the program or `absolute path` is accessible.
+The input parameter is `raw_data`. Try except is used to prevent `No file or directory` error.
 User can terminate the program by typing `\q`.
-Error will be printed and the program will force user to input the correct file or directory again.
-This function will return parameter `raw_data` to create dataframe.
+The error will be printed and force the user to input the correct file or directory again.
+This function will return the parameter `raw_data` to create dataframe.
 ```py
 raw_data = None
 def input_csv(raw_data):
@@ -58,11 +55,15 @@ def input_csv(raw_data):
 raw_data = input_csv(raw_data)
 df = pd.DataFrame(raw_data)
 ```
+Result in console:
+```bash
+Input CSV file (staff_dir.csv): staff_dir.csv
+```
 
 ## Check Empty Values
-Then the program will look for empty values by calling this function automedically.
-It requires global variable `df`. Firstly, the function will search for any `Unnamed` column name, then will scan the values in each column to find any column is containing empty values.
-After that the conlcusion will be shown and it will return to main function.
+Then the program will look for empty values by calling this function automatically.
+It requires a global variable `df`. Firstly, the function will search for any `Unnamed` column name and scan values in each column to find any column is containing empty values.
+After that, the conclusion will be shown and it will return to the main function.
 ```py
 check_columns_with_empty_cell(df)
 
@@ -85,7 +86,7 @@ prog
 
 ## Normalization
 Then the program will normalize dataframe to first normal form by using `-r` to start.
-Global variable `df` will be used and expend rows containning `\r\n` to ensure each cell only contain one value.
+Global variable `df` will be used and expend rows containing `\r\n` to ensure each cell only contain one value.
 A list `column_with_multi_values` is formed to save columns with multiple values.
 Then by setting index without the particular column, use `.explode()` to append the row to perform normalization.
 ```py
@@ -112,13 +113,13 @@ def normalization():
 ```
 
 ## Tidy Dataframe
-Later the program will delete all excessing spaces and replace data automedically.
+Later the program will delete all excessing spaces and replace data automatically.
 Global variable `df` will be used.
-By continuing the `normalization()` function, it will eliminating excessive spaces and change to `title` textcase.
+By continuing the `normalization()` function, it will eliminate excessive spaces and change to `title` textcase.
 In `Location`, all strings will change to `upper` textcase.
-In `Phone`, all speical characters will be removed.
+In `Phone`, all special characters will be removed.
 In `Position`, all abbreviations will extend to long format.
-After that, index number will be reset to reproduce as row number.
+After that, the index number will be reset to reproduce as row number.
 ```py
 def tidy_dataframe():
     global df
@@ -162,17 +163,31 @@ Usage of options
 
 ## Modify Column Title
 To modify a title in a selected column, use `-M` to change the string.
+Global variable `df` will be used.
+The local variable `col` will be formed by asking the user to type the name of a column that want to change.
+If else ensure user to input correct column name, otherwise will ask for input again.
+User can return to the main function by typing `\q`.
 ```py
 def modify_column_name():
     global df
 
     print(df.columns.values)
-    col = input("Name of col that you want to rename: ")
-    if col not in df.columns.values: return modify_column_name()
+    col = input("Name of column that you want to rename: ")
+    if col == '\q': main()
+    elif col not in df.columns.values: return modify_column_name()
     i = input("Updated name: ")
     df = df.rename(columns={col: i})
-
+    print(f'"{col}" is changed to "{i}".')
     return main()
+ ```
+ Result in console:
+ ```bash
+prog -M
+['Title' 'Surname' 'Given Name' 'Position' 'Location' 'E-mail Address'
+ 'Phone Number']
+Name of column that you want to rename: Title
+Updated name: Rename-Title
+"Title" is changed to "Rename-Title".
  ```
 
 ## Modify cell
