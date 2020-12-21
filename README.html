@@ -400,20 +400,22 @@ code {
 </li>
 </ul>
 <h1 id="requirement">Requirement</h1>
-<p>This script requires <code>pandas</code>, <code>numpy</code> and <code>re</code> library to run, you need to install to run successfully.</p>
+<p>This program requires <code>pandas</code> and <code>re</code> library to run, you need to install them before running successfully.</p>
 <pre class="hljs"><code><div>pip3 install pandas
 </div></code></pre>
 <h1 id="usage">Usage</h1>
-<p>The program is processing the step of data cleaning. It will detect any spaces and empty values, then transform to first normal formal utilizing normalization. After that user can reproduce a cleaned version of the CSV file.</p>
+<p>The program is processing data cleaning and normalization.
+It will detect any spaces and empty values, then transform to first normal form.
+After that user can reproduce a tidy CSV file.</p>
 <pre class="hljs"><code><div>python3 individual_ex.py
 </div></code></pre>
 <h2 id="input-csv">Input CSV</h2>
-<p>First input CSV for processing.
-<code>CSV name</code> in the current folder with the program or <code>absolute path</code> is accessible.
-The input parameter is <code>raw_data</code>. Try except is used to prevent <code>No file or directory</code> error.
-User can terminate the program by typing <code>\q</code>.
-The error will be printed and force the user to input the correct file or directory again.
-This function will return the parameter <code>raw_data</code> to create dataframe.</p>
+<p>CSV is needed for handling firstly.
+By using <code>input_csv</code> function, the user require to enter the CSV in the current folder with the program or the absolute path, forming a local variable <code>csv_file</code>.
+User can terminate the program by typing <code>\q</code> passing through <code>if-else</code>.
+<code>Try-except</code> is used to prevent <code>No file or directory</code> error.
+The function will return to the global parameter <code>raw_data</code> to create dataframe if the program successfully read the CSV file.
+Otherwise, the program will print the error and force the user to input the correct file or directory again by returning to the beginning of the function.</p>
 <pre class="hljs"><code><div>raw_data = <span class="hljs-literal">None</span>
 <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">input_csv</span><span class="hljs-params">(raw_data)</span>:</span>
     <span class="hljs-keyword">try</span>:
@@ -426,19 +428,18 @@ This function will return the parameter <code>raw_data</code> to create datafram
     <span class="hljs-keyword">else</span>:
         <span class="hljs-keyword">return</span> raw_data
 
+print(<span class="hljs-string">"Welcome to the data cleaning program! Type '-h' or '--help' to know the command of the program."</span>)
 raw_data = input_csv(raw_data)
 df = pd.DataFrame(raw_data)
 </div></code></pre>
-<p>Result in console:</p>
-<pre class="hljs"><code><div>Input CSV file (staff_dir.csv): staff_dir.csv
-</div></code></pre>
+<p>Result:
+<img src="./results/input_csv.png" alt="alt text" title="input_csv"></p>
 <h2 id="check-empty-values">Check Empty Values</h2>
 <p>Then the program will look for empty values by calling this function automatically.
-It requires a global variable <code>df</code>. Firstly, the function will search for any <code>Unnamed</code> column name and scan values in each column to find any column is containing empty values.
-After that, the conclusion will be shown and it will return to the main function.</p>
-<pre class="hljs"><code><div>check_columns_with_empty_cell(df)
-
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">check_columns_with_empty_cell</span><span class="hljs-params">(df)</span>:</span>
+It utilises the global variable <code>df</code>, searches for any <code>Unnamed</code> column and scans each cell in every column to find any empty values.
+Every column's name will first change to title textcase furthermore add into <code>empty_cols_name</code> and <code>empty_cols</code> list if it contains empty values.
+The conclusion will be shown in the console and then return to the main function.</p>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">check_columns_with_empty_cell</span><span class="hljs-params">(df)</span>:</span>
 
     df.columns = [<span class="hljs-string">' '</span>.join(i.split()) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> df.columns]
     empty_cols_name = [value <span class="hljs-keyword">for</span> value <span class="hljs-keyword">in</span> df.columns <span class="hljs-keyword">if</span> <span class="hljs-string">"Unnamed"</span> <span class="hljs-keyword">in</span> value]
@@ -448,15 +449,13 @@ After that, the conclusion will be shown and it will return to the main function
 
     <span class="hljs-keyword">return</span> main()
 </div></code></pre>
-<p>Result in console:</p>
-<pre class="hljs"><code><div>You have 0 columns without naming
-You have 0 columns with empty cells
-</div></code></pre>
+<p>Result:
+<img src="./results/input_csv.png" alt="alt text" title="input_csv"></p>
 <h2 id="normalization">Normalization</h2>
-<p>Then the program will normalize dataframe to first normal form by using <code>-r</code> or <code>--run</code> to start.
-Global variable <code>df</code> will be used to expend rows containing <code>\r\n</code> to ensure each cell only contain one value.
-A list <code>column_with_multi_values</code> is formed to save columns with multiple values.
-Then by setting index without the particular column, use <code>.explode()</code> to append the row to perform normalization.</p>
+<p>The program will start normalizing dataframe to first normal form by entering <code>-r</code> or <code>--run</code>.
+By finding columns containing <code>\r\n</code>, which means it has multiple values in a cell, it will add into a local list <code>column_with_multi_values</code> after and set an <code>if-else</code> condition to add an undiscovered column only.
+Then by setting index without the particular column, use <code>.explode()</code> to append the row to perform normalization.
+Global variable <code>df</code> is changed and automatically call <code>tidy_dataframe</code> function for cleaning data.</p>
 <pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">normalization</span><span class="hljs-params">()</span>:</span>
     <span class="hljs-keyword">global</span> df
     column_with_multi_values = []
@@ -479,12 +478,11 @@ Then by setting index without the particular column, use <code>.explode()</code>
     <span class="hljs-keyword">return</span> tidy_dataframe()
 </div></code></pre>
 <h2 id="tidy-dataframe">Tidy Dataframe</h2>
-<p>Later the program will delete all excessing spaces and replace data automatically.
-By continuing the <code>normalization()</code> function, it will eliminate excessive spaces and change to <code>title</code> textcase.
-In <code>Location</code>, all strings will change to <code>upper</code> textcase.
-In <code>Phone</code>, all special characters will be removed.
-In <code>Position</code>, all abbreviations will extend to long format.
-After that, the index number will be reset to reproduce as row number.</p>
+<p>After normalization, the program will delete all excessive spaces tidy up the dataframe.
+By using <code>if-else</code> condition, all strings will change to <code>upper</code> textcase in <code>Location</code>.
+All special characters will be removed in <code>Phone</code> and all abbreviations will extend to long format in <code>Position</code>.
+After that, duplicated rows will be shown in the console and eliminated, next the index number will be reset as the row number.
+Global variable <code>df</code> is changed.</p>
 <pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">tidy_dataframe</span><span class="hljs-params">()</span>:</span>
     <span class="hljs-keyword">global</span> df
 
@@ -503,36 +501,28 @@ After that, the index number will be reset to reproduce as row number.</p>
     df = df.drop_duplicates()
     df.reset_index(inplace=<span class="hljs-literal">True</span>)
     <span class="hljs-keyword">del</span> df[<span class="hljs-string">'index'</span>]
-    print(<span class="hljs-string">"Diminish spaces and title values"</span>)
+    print(<span class="hljs-string">"Dataframe is cleaned"</span>)
 
     <span class="hljs-keyword">return</span> main()
 </div></code></pre>
-<p>Result in console:</p>
-<pre class="hljs"><code><div>prog -r
-Normalization is complete
-Duplicated Rows: 
-     Title Surname   Given Name  E-mail Address Phone Number                 Position Location
-15  Prof.    Tang  Akaysha Can   actang@hku.hk     25698751                Professor    MW523
-16  Prof.    Tang  Akaysha Can   actang@hku.hk     25698751                Professor    MW538
-17  Prof.    Tang  Akaysha Can   actang@hku.hk     25698751  Director Of The Nfe Lab    MW523
-18  Prof.    Tang  Akaysha Can   actang@hku.hk     25698751  Director Of The Nfe Lab    MW538
-24    Dr.     Lai         Chun  laichun@hku.hk     25698761      Associate Professor    MW623
-Diminish spaces and title values
-</div></code></pre>
+<p>Result:
+<img src="./results/tidy_dataframe.png" alt="alt text" title="tidy_dataframe"></p>
 <h1 id="options">Options</h1>
-<p>Usage of options</p>
 <h2 id="print-dataframe">Print Dataframe</h2>
 <p>To print the current dataframe, use <code>-p</code> or <code>--print</code>.
-Then it will return to main function.</p>
+Then it will return to the main function.</p>
 <pre class="hljs"><code><div><span class="hljs-keyword">if</span> usr_input == <span class="hljs-string">'-p'</span> <span class="hljs-keyword">or</span> usr_input == <span class="hljs-string">'--print'</span>:
     print(df)
     main()
 </div></code></pre>
+<p>Result:
+<img src="./results/print.png" alt="alt text" title="print"></p>
 <h2 id="modify-column-title">Modify Column Title</h2>
 <p>To modify a title in a selected column, use <code>-M</code> or <code>--modify_col_name</code> to change the string.
-The local variable <code>col</code> will be formed by asking the user to type the name of a column that want to change, and <code>i</code> will record the changed name.
-If else ensure user to input correct column name, otherwise will ask for input again.
-User can return to the main function by typing <code>\q</code>.</p>
+Column names will be shown in the console for reminding.
+A local variable <code>col</code> will be formed by asking the user to type the name of the column for changing, and <code>i</code> will record the changed name.
+<code>If else</code> condition ensures the user to input the listed column name, otherwise ask for input again by returning to the beginning of the function.
+User can return to the main function by typing <code>\q</code>. Global variable <code>df</code> is changed.</p>
 <pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">modify_column_name</span><span class="hljs-params">()</span>:</span>
     <span class="hljs-keyword">global</span> df
 
@@ -543,23 +533,20 @@ User can return to the main function by typing <code>\q</code>.</p>
     i = input(<span class="hljs-string">"Updated name: "</span>)
     df = df.rename(columns={col: i})
     print(<span class="hljs-string">f'"<span class="hljs-subst">{col}</span>" is changed to "<span class="hljs-subst">{i}</span>".'</span>)
+
     <span class="hljs-keyword">return</span> main()
 </div></code></pre>
-<p>Result in console:</p>
-<pre class="hljs"><code><div>prog -M
-[<span class="hljs-string">'Title'</span> <span class="hljs-string">'Surname'</span> <span class="hljs-string">'Given Name'</span> <span class="hljs-string">'Position'</span> <span class="hljs-string">'Location'</span> <span class="hljs-string">'E-mail Address'</span>
-<span class="hljs-string">'Phone Number'</span>]
-Name of column that you want to rename: Title
-Updated name: Rename-Title
-<span class="hljs-string">"Title"</span> is changed to <span class="hljs-string">"Rename-Title"</span>.
-</div></code></pre>
+<p>Result:
+<img src="./results/modify_column_name.png" alt="alt text" title="modify_column_name"></p>
 <h2 id="modify-cell">Modify cell</h2>
 <p>To modify a value in a selected cell, use <code>-m</code> or <code>--modify_cell</code> to change the string.
-The local variable <code>col</code>, <code>row</code> and <code>value</code> save user's input to locate the specific cell, then change to the value in <code>value</code>.
-If else can prevent the user from inputting incorrect column name and row that exceeds the total number of row in the dataframe, and restrict the user to input again.
-User can return to the main function by typing <code>\q</code>.</p>
+Column names and numbers of the row will be shown in the console for reminding.
+The local variable <code>col</code> and <code>row</code> save user's input that locating to the specific cell, then change to the value in <code>value</code>.
+<code>If else</code> condition can prevent the user from entering an incorrect column name and row that exceeds the total number of row in the dataframe, and restrict the user to input again.
+User can return to the main function by typing <code>\q</code>. Global variable <code>df</code> is changed.</p>
 <pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">modify_cell</span><span class="hljs-params">()</span>:</span>
     <span class="hljs-keyword">global</span> df
+
     print(<span class="hljs-string">"Input row, column and value to a cell that you want to change"</span>)
     print(<span class="hljs-string">"Length of dataframe is"</span>, len(df) - <span class="hljs-number">1</span>, <span class="hljs-string">'\n'</span>, df.columns.values)
     row = input(<span class="hljs-string">"Number of Row: "</span>)
@@ -575,25 +562,18 @@ User can return to the main function by typing <code>\q</code>.</p>
 
     <span class="hljs-keyword">return</span> main()
 </div></code></pre>
-<p>Result in console:</p>
-<pre class="hljs"><code><div>prog -m
-Input row, column and value to a cell that you want to change
-Length of dataframe is 16
- [<span class="hljs-string">'Title'</span> <span class="hljs-string">'Surname'</span> <span class="hljs-string">'Given Name'</span> <span class="hljs-string">'Position'</span> <span class="hljs-string">'Location'</span> <span class="hljs-string">'E-mail Address'</span>
- <span class="hljs-string">'Phone Number'</span>]
-Number of Row: 1
-Name of Column: Title
-Value: Mr.
-The value of row 1 <span class="hljs-keyword">in</span> <span class="hljs-string">"Title"</span> is changed to <span class="hljs-string">"Mr."</span>.
-</div></code></pre>
+<p>Result:
+<img src="./results/modify_cell.png" alt="alt text" title="modify_cell"></p>
 <h2 id="count-values-in-selected-column">Count Values in Selected Column</h2>
 <p>To count the number of values in a specific column, use <code>-C</code> or <code>--count_column</code>.
-The local variable <code>col</code> save the selected column from the user and calculate the number of each value.
-If else can prevent the user from inputting incorrect column name, and restrict the user to input again.
+Column names will be shown in the console for reminding.
+User's input will save in the local variable <code>col</code> to calculate the sum of values.
+<code>If else</code> condition can prevent the user from inputting incorrect column name, and restrict the user to input again.
 Then print in the console.
 User can return to the main function by typing <code>\q</code>.</p>
 <pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">counting_with_a_column</span><span class="hljs-params">()</span>:</span>
     <span class="hljs-keyword">global</span> df
+
     print(df.columns.values)
     col = input(<span class="hljs-string">"Select a column to count: "</span>)
     <span class="hljs-keyword">if</span> col == <span class="hljs-string">'\q'</span>: <span class="hljs-keyword">return</span> main()
@@ -602,23 +582,17 @@ User can return to the main function by typing <code>\q</code>.</p>
     selected_column = {i: selected_column.count(i) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> selected_column}
     <span class="hljs-keyword">for</span> key, value <span class="hljs-keyword">in</span> selected_column.items():
         print(key, value)
+
     <span class="hljs-keyword">return</span> main()
 </div></code></pre>
-<p>Result in console:</p>
-<pre class="hljs"><code><div>prog -C
-[<span class="hljs-string">'Title'</span> <span class="hljs-string">'Surname'</span> <span class="hljs-string">'Given Name'</span> <span class="hljs-string">'E-mail Address'</span> <span class="hljs-string">'Phone Number'</span> <span class="hljs-string">'Position'</span>
- <span class="hljs-string">'Location'</span>]
-Select a column to count: Title
-Prof. 5
-Dr. 14
-Ms. 2
-Mr. 1
-</div></code></pre>
+<p>Result:
+<img src="./results/counting_with_a_column.png" alt="alt text" title="counting_with_a_column"></p>
 <h2 id="delete-selected-column">Delete Selected Column</h2>
 <p>Use <code>-D</code> or <code>--remove_col</code> to delete a selected column.
-The local variable <code>i</code> save the name of column from the user to delete.
-If else can prevent the user from inputting incorrect column name, and restrict the user to input again.
-User can return to the main function by typing <code>\q</code>.</p>
+User's input will save in the local variable <code>i</code> to delete.
+Column names will be shown in the console for reminding.
+<code>If else</code> condition can prevent the user from inputting incorrect column name, and restrict the user to input again.
+User can return to the main function by typing <code>\q</code>. Global variable <code>df</code> is changed.</p>
 <pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">remove_selected_column</span><span class="hljs-params">()</span>:</span>
     <span class="hljs-keyword">global</span> df
 
@@ -627,25 +601,21 @@ User can return to the main function by typing <code>\q</code>.</p>
     <span class="hljs-keyword">if</span> i == <span class="hljs-string">'\q'</span>: <span class="hljs-keyword">return</span> main()
     <span class="hljs-keyword">elif</span> i <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> df.columns.values: <span class="hljs-keyword">return</span> remove_selected_column()
     <span class="hljs-keyword">else</span>: <span class="hljs-keyword">del</span> df[i]
-
     print(<span class="hljs-string">f'"<span class="hljs-subst">{i}</span>" is removed.'</span>)
 
     <span class="hljs-keyword">return</span> main()
 </div></code></pre>
-<p>Result in console:</p>
-<pre class="hljs"><code><div>prog -D
-[<span class="hljs-string">'Title'</span> <span class="hljs-string">'Surname'</span> <span class="hljs-string">'Given Name'</span> <span class="hljs-string">'Position'</span> <span class="hljs-string">'Location'</span> <span class="hljs-string">'E-mail Address'</span>
- <span class="hljs-string">'Phone Number'</span>]
-Type the name of column to delete: Title
-<span class="hljs-string">"Title"</span> is removed.
-</div></code></pre>
+<p>Result:
+<img src="./results/remove_selected_column.png" alt="alt text" title="remove_selected_column"></p>
 <h2 id="delete-selected-row">Delete Selected Row</h2>
 <p>Use <code>-d</code> or <code>--remove_row</code> to delete a selected row.
-The local variable <code>row</code> save the number of row from the user to delete.
-If else can prevent the user from inputting incorrect number of row, and restrict the user to input again.
-User can return to the main function by typing <code>\q</code>.</p>
+User's input will save in the local variable <code>row</code> to delete.
+Numbers of the row will be shown in the console for reminding.
+<code>If else</code> condition can prevent the user from inputting the incorrect number of row, and restrict the user to input again.
+User can return to the main function by typing <code>\q</code>. Global variable <code>df</code> is changed.</p>
 <pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">remove_selected_row</span><span class="hljs-params">()</span>:</span>
     <span class="hljs-keyword">global</span> df
+
     print(len(df))
     row = input(<span class="hljs-string">"Number of row to remove: "</span>)
     <span class="hljs-keyword">if</span> row == <span class="hljs-string">'\q'</span>: <span class="hljs-keyword">return</span> main()
@@ -657,16 +627,13 @@ User can return to the main function by typing <code>\q</code>.</p>
 
     <span class="hljs-keyword">return</span> main()
 </div></code></pre>
-<p>Result in console:</p>
-<pre class="hljs"><code><div>prog -d
-17
-Number of row to remove: 4 
-Row 4 is removed.
-</div></code></pre>
+<p>Result:
+<img src="./results/remove_selected_row.png" alt="alt text" title="remove_selected_row"></p>
 <h2 id="call-a-cell-value">Call a Cell Value</h2>
 <p>Use <code>-v</code> or <code>--view_value</code> to view the value with a selected cell.
-The local variable <code>row</code> and <code>col</code> save the input from the user to view a cell value.
-If else can prevent the user from inputting incorrect number of row and the name of column, and restrict the user to input again.
+Column names and numbers of the row will be shown in the console for reminding.
+User's input will save in the local variable <code>row</code> and <code>col</code> to view a cell value.
+<code>If else</code> condition can prevent the user from the inputting incorrect number of row and the name of a column, and restrict the user to input again.
 User can return to the main function by typing <code>\q</code>.</p>
 <pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">receive_cell_value</span><span class="hljs-params">()</span>:</span>
     print(<span class="hljs-string">'Length of the row is'</span>, len(df) - <span class="hljs-number">1</span>)
@@ -684,21 +651,15 @@ User can return to the main function by typing <code>\q</code>.</p>
 
     <span class="hljs-keyword">return</span> main()
 </div></code></pre>
-<p>Result in console:</p>
-<pre class="hljs"><code><div>prog -v
-Length of the row is 16
-Number of Row: 4
-[<span class="hljs-string">'Title'</span> <span class="hljs-string">'Surname'</span> <span class="hljs-string">'Given Name'</span> <span class="hljs-string">'Position'</span> <span class="hljs-string">'Location'</span> <span class="hljs-string">'E-mail Address'</span>
- <span class="hljs-string">'Phone Number'</span>]
-Name of Column: Title
-The value is Mr.
-</div></code></pre>
+<p>Result:
+<img src="./results/receive_cell_value.png" alt="alt text" title="receive_cell_value"></p>
 <h2 id="output-csv">Output CSV</h2>
-<p>Use <code>-o</code> or <code>--gen_csv</code> to specify the name of CSV and form a new CSV file.
+<p>Use <code>-o</code> or <code>--gen_csv</code> to specify the name of CSV for creating a new CSV.
 The local variable <code>output</code> save the name of the new CSV file.
 User can return to the main function by typing <code>\q</code>.</p>
 <pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">to_csv</span><span class="hljs-params">()</span>:</span>
     <span class="hljs-keyword">global</span> df
+
     output = input(<span class="hljs-string">"Name of the new csv file: "</span>)
     <span class="hljs-keyword">if</span> output == <span class="hljs-string">'\q'</span>: <span class="hljs-keyword">return</span> main()
     df.to_csv(<span class="hljs-string">f'<span class="hljs-subst">{output}</span>.csv'</span>, index=<span class="hljs-number">0</span>)
@@ -706,16 +667,15 @@ User can return to the main function by typing <code>\q</code>.</p>
 
     <span class="hljs-keyword">return</span> main()
 </div></code></pre>
-<p>Result in console:</p>
-<pre class="hljs"><code><div>prog -o
-Name of the new csv file: output
-output.csv is generated.
-</div></code></pre>
+<p>Result:
+<img src="./results/to_csv.png" alt="alt text" title="to_csv"></p>
 <h2 id="change-text-case">Change Text Case</h2>
-<p>To change the the value to selected textcase within a particular column, use <code>-t</code> or <code>--text_case</code>.
+<p>To change values to selected textcase within a particular column, use <code>-t</code> or <code>--text_case</code>.
+Column names will be shown in the console for reminding.
 The local variable <code>col</code> and <code>val</code> save the name of column and selected textcase.
-If else can prevent the user from inputting incorrect name of column and type of textcase, and restrict the user to input again.
-User can return to the main function by typing <code>\q</code>.</p>
+User type <code>up</code> to change the textcase to <code>upper</code>, type <code>lo</code> for <code>lower</code> and <code>ti</code> for <code>title</code> textcase.
+<code>If else</code> condition can prevent the user from inputting incorrect name of column and type of textcase, and restrict the user to input again.
+User can return to the main function by typing <code>\q</code>. Global variable <code>df</code> is changed.</p>
 <pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">change_text_case</span><span class="hljs-params">()</span>:</span>
     <span class="hljs-keyword">global</span> df
 
@@ -736,19 +696,15 @@ User can return to the main function by typing <code>\q</code>.</p>
     print(<span class="hljs-string">f'The textcase of "<span class="hljs-subst">{col}</span>" is changed.'</span>)
     <span class="hljs-keyword">return</span> main()
 </div></code></pre>
-<p>Result of console:</p>
-<pre class="hljs"><code><div>prog -t
-[<span class="hljs-string">'Title'</span> <span class="hljs-string">'Surname'</span> <span class="hljs-string">'Given Name'</span> <span class="hljs-string">'E-mail Address'</span> <span class="hljs-string">'Phone Number'</span> <span class="hljs-string">'Position'</span>
- <span class="hljs-string">'Location'</span>]
-Name of column to change: Title
-<span class="hljs-string">'up'</span> <span class="hljs-keyword">for</span> upper, <span class="hljs-string">'lo'</span> <span class="hljs-keyword">for</span> lower or <span class="hljs-string">'ti'</span> <span class="hljs-keyword">for</span> title: up
-The textcase of <span class="hljs-string">"Title"</span> is changed.
-</div></code></pre>
+<p>Result:
+<img src="./results/change_text_case.png" alt="alt text" title="change_text_case"></p>
 <h2 id="sorting">Sorting</h2>
-<p>Use <code>-s</code> or <code>--sort</code> to sort the dataframe by selected column.
+<p>Use <code>-s</code> or <code>--sort</code> to sort the dataframe by the selected column.
+Column names will be shown in the console for reminding.
 The local variable <code>col</code> and <code>val</code> save the name of column and selected pattern of sorting.
-If else can prevent the user from inputting incorrect name of column and type of pattern, and restrict the user to input again.
-User can return to the main function by typing <code>\q</code>.
+User type <code>de</code> for descending order and <code>as</code> for ascending order.
+<code>If else</code> condition can prevent the user from inputting incorrect name of column and type of pattern, and restrict the user to input again.
+User can return to the main function by typing <code>\q</code>. Global variable <code>df</code> is changed.
 The index will reset to generate new row numbers series.</p>
 <pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">sort_by_column</span><span class="hljs-params">()</span>:</span>
     <span class="hljs-keyword">global</span> df
@@ -770,20 +726,16 @@ The index will reset to generate new row numbers series.</p>
     print(<span class="hljs-string">f'The order of "<span class="hljs-subst">{col}</span>" is changed.'</span>)
     <span class="hljs-keyword">return</span> main()
 </div></code></pre>
-<p>Result in console:</p>
-<pre class="hljs"><code><div>prog -s
-[<span class="hljs-string">'Title'</span> <span class="hljs-string">'Surname'</span> <span class="hljs-string">'Given Name'</span> <span class="hljs-string">'E-mail Address'</span> <span class="hljs-string">'Phone Number'</span> <span class="hljs-string">'Position'</span>
- <span class="hljs-string">'Location'</span>]
-Name of column to sort: Surname
-<span class="hljs-string">'as'</span> <span class="hljs-keyword">for</span> ascending or <span class="hljs-string">'de'</span> <span class="hljs-keyword">for</span> descending: as
-The order of <span class="hljs-string">"Surname"</span> is changed.
-</div></code></pre>
+<p>Result:
+<img src="./results/sort_by_column.png" alt="alt text" title="sort_by_column"></p>
 <h2 id="quit">Quit</h2>
 <p>Use <code>\q</code> or <code>--quit</code> to exit the program.</p>
 <pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">quit_prog</span><span class="hljs-params">()</span>:</span>
     print(<span class="hljs-string">"Thank you and Goodbye"</span>)
     exit()
 </div></code></pre>
+<p>Result:
+<img src="./results/quit.png" alt="alt text" title="quit"></p>
 <h1 id="help-list">Help List</h1>
 <p>The help information is generated based on the information commander already knows about the program. The default help option is <code>-h,--help</code>.</p>
 <pre class="hljs"><code><div>-p,   --<span class="hljs-built_in">print</span>              Print all dataframe           
@@ -803,7 +755,6 @@ The order of <span class="hljs-string">"Surname"</span> is changed.
 <p><img src="flow-chart.png" alt="alt text" title="flow-chart"></p>
 <h1 id="appendix">Appendix</h1>
 <pre class="hljs"><code><div><span class="hljs-keyword">import</span> pandas <span class="hljs-keyword">as</span> pd
-<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
 <span class="hljs-keyword">import</span> re
 
 raw_data = <span class="hljs-literal">None</span>
@@ -946,7 +897,7 @@ raw_data = <span class="hljs-literal">None</span>
     df = df.drop_duplicates()
     df.reset_index(inplace=<span class="hljs-literal">True</span>)
     <span class="hljs-keyword">del</span> df[<span class="hljs-string">'index'</span>]
-    print(<span class="hljs-string">"Diminish spaces and title values"</span>)
+    print(<span class="hljs-string">"Dataframe is cleaned"</span>)
 
     <span class="hljs-keyword">return</span> main()
 

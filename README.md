@@ -23,10 +23,9 @@
     - [Appendix](#appendix)
 
 # Requirement
-This program requires `pandas`, `numpy` and `re` library to run, you need to install them before running successfully.
+This program requires `pandas` and `re` library to run, you need to install them before running successfully.
 ```bash
 pip3 install pandas
-pip3 install numpy
 ```
 
 # Usage
@@ -417,7 +416,6 @@ The help information is generated based on the information commander already kno
 # Appendix 
 ```py
 import pandas as pd
-import numpy as np
 import re
 
 raw_data = None

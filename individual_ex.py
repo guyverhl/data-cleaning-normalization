@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import re
 
 raw_data = None
@@ -145,7 +144,7 @@ def tidy_dataframe():
     df = df.drop_duplicates()
     df.reset_index(inplace=True)
     del df['index']
-    print("Diminish spaces and title values")
+    print("Dataframe is cleaned")
 
     return main()
 
