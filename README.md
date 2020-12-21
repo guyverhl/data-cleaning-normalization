@@ -188,7 +188,7 @@ User can return to the main function by typing `\q`. Global variable `df` is cha
 ```py
 def modify_cell():
     global df
-    
+
     print("Input row, column and value to a cell that you want to change")
     print("Length of dataframe is", len(df) - 1, '\n', df.columns.values)
     row = input("Number of Row: ")
@@ -209,13 +209,15 @@ def modify_cell():
 
 ## Count Values in Selected Column
 To count the number of values in a specific column, use `-C` or `--count_column`.
-The local variable `col` save the selected column from the user and calculate the number of each value.
-If else can prevent the user from inputting incorrect column name, and restrict the user to input again.
+Column names will be shown in the console for reminding.
+User's input will save in the local variable `col` to calculate the sum of values.
+`If else` condition can prevent the user from inputting incorrect column name, and restrict the user to input again.
 Then print in the console.
 User can return to the main function by typing `\q`.
 ```py
 def counting_with_a_column():
     global df
+
     print(df.columns.values)
     col = input("Select a column to count: ")
     if col == '\q': return main()
@@ -224,25 +226,18 @@ def counting_with_a_column():
     selected_column = {i: selected_column.count(i) for i in selected_column}
     for key, value in selected_column.items():
         print(key, value)
+
     return main()
 ```
-Result in console:
-```bash
-prog -C
-['Title' 'Surname' 'Given Name' 'E-mail Address' 'Phone Number' 'Position'
- 'Location']
-Select a column to count: Title
-Prof. 5
-Dr. 14
-Ms. 2
-Mr. 1
-```
+ Result:
+![alt text](./results/counting_with_a_column.png "counting_with_a_column")
 
 ## Delete Selected Column
 Use `-D` or `--remove_col` to delete a selected column.
-The local variable `i` save the name of column from the user to delete.
-If else can prevent the user from inputting incorrect column name, and restrict the user to input again.
-User can return to the main function by typing `\q`.
+User's input will save in the local variable `i` to delete.
+Column names will be shown in the console for reminding.
+`If else` condition can prevent the user from inputting incorrect column name, and restrict the user to input again.
+User can return to the main function by typing `\q`. Global variable `df` is changed.
 ```py
 def remove_selected_column():
     global df
@@ -252,28 +247,23 @@ def remove_selected_column():
     if i == '\q': return main()
     elif i not in df.columns.values: return remove_selected_column()
     else: del df[i]
-
     print(f'"{i}" is removed.')
 
     return main()
 ```
-Result in console:
-```bash
-prog -D
-['Title' 'Surname' 'Given Name' 'Position' 'Location' 'E-mail Address'
- 'Phone Number']
-Type the name of column to delete: Title
-"Title" is removed.
-```
+ Result:
+![alt text](./results/remove_selected_column.png "remove_selected_column")
 
 ## Delete Selected Row
 Use `-d` or `--remove_row` to delete a selected row.
-The local variable `row` save the number of row from the user to delete.
-If else can prevent the user from inputting incorrect number of row, and restrict the user to input again.
-User can return to the main function by typing `\q`.
+User's input will save in the local variable `row` to delete.
+Numbers of the row will be shown in the console for reminding.
+`If else` condition can prevent the user from inputting the incorrect number of row, and restrict the user to input again.
+User can return to the main function by typing `\q`. Global variable `df` is changed.
 ```py
 def remove_selected_row():
     global df
+
     print(len(df))
     row = input("Number of row to remove: ")
     if row == '\q': return main()
@@ -285,18 +275,14 @@ def remove_selected_row():
 
     return main()
 ```
-Result in console:
-```bash
-prog -d
-17
-Number of row to remove: 4 
-Row 4 is removed.
-```
+ Result:
+![alt text](./results/remove_selected_row.png "remove_selected_row")
 
 ## Call a Cell Value
 Use `-v` or `--view_value` to view the value with a selected cell.
-The local variable `row` and `col` save the input from the user to view a cell value.
-If else can prevent the user from inputting incorrect number of row and the name of column, and restrict the user to input again.
+Column names and numbers of the row will be shown in the console for reminding.
+User's input will save in the local variable `row` and `col` to view a cell value.
+`If else` condition can prevent the user from the inputting incorrect number of row and the name of a column, and restrict the user to input again.
 User can return to the main function by typing `\q`.
 ```py
 def receive_cell_value():
@@ -315,24 +301,17 @@ def receive_cell_value():
 
     return main()
 ```
-Result in console:
-```bash
-prog -v
-Length of the row is 16
-Number of Row: 4
-['Title' 'Surname' 'Given Name' 'Position' 'Location' 'E-mail Address'
- 'Phone Number']
-Name of Column: Title
-The value is Mr.
-```
+ Result:
+![alt text](./results/receive_cell_value.png "receive_cell_value")
 
 ## Output CSV
-Use `-o` or `--gen_csv` to specify the name of CSV and form a new CSV file.
+Use `-o` or `--gen_csv` to specify the name of CSV for creating a new CSV.
 The local variable `output` save the name of the new CSV file.
 User can return to the main function by typing `\q`.
 ```py
 def to_csv():
     global df
+
     output = input("Name of the new csv file: ")
     if output == '\q': return main()
     df.to_csv(f'{output}.csv', index=0)
@@ -340,18 +319,16 @@ def to_csv():
 
     return main()
 ```
-Result in console:
-```bash
-prog -o
-Name of the new csv file: output
-output.csv is generated.
-```
+ Result:
+![alt text](./results/to_csv.png "to_csv")
 
 ## Change Text Case
-To change the the value to selected textcase within a particular column, use `-t` or `--text_case`.
+To change values to selected textcase within a particular column, use `-t` or `--text_case`.
+Column names will be shown in the console for reminding.
 The local variable `col` and `val` save the name of column and selected textcase.
-If else can prevent the user from inputting incorrect name of column and type of textcase, and restrict the user to input again.
-User can return to the main function by typing `\q`.
+User type `up` to change the textcase to `upper`, type `lo` for `lower` and `ti` for `title` textcase.
+`If else` condition can prevent the user from inputting incorrect name of column and type of textcase, and restrict the user to input again.
+User can return to the main function by typing `\q`. Global variable `df` is changed.
 ```py
 def change_text_case():
     global df
@@ -373,21 +350,16 @@ def change_text_case():
     print(f'The textcase of "{col}" is changed.')
     return main()
 ```
-Result of console:
-```bash
-prog -t
-['Title' 'Surname' 'Given Name' 'E-mail Address' 'Phone Number' 'Position'
- 'Location']
-Name of column to change: Title
-'up' for upper, 'lo' for lower or 'ti' for title: up
-The textcase of "Title" is changed.
-```
+ Result:
+![alt text](./results/change_text_case.png "change_text_case")
 
 ## Sorting
-Use `-s` or `--sort` to sort the dataframe by selected column.
+Use `-s` or `--sort` to sort the dataframe by the selected column.
+Column names will be shown in the console for reminding.
 The local variable `col` and `val` save the name of column and selected pattern of sorting.
-If else can prevent the user from inputting incorrect name of column and type of pattern, and restrict the user to input again.
-User can return to the main function by typing `\q`.
+User type `de` for descending order and `as` for ascending order.
+`If else` condition can prevent the user from inputting incorrect name of column and type of pattern, and restrict the user to input again.
+User can return to the main function by typing `\q`. Global variable `df` is changed.
 The index will reset to generate new row numbers series.
 ```py
 def sort_by_column():
@@ -410,15 +382,8 @@ def sort_by_column():
     print(f'The order of "{col}" is changed.')
     return main()
 ```
-Result in console:
-```bash
-prog -s
-['Title' 'Surname' 'Given Name' 'E-mail Address' 'Phone Number' 'Position'
- 'Location']
-Name of column to sort: Surname
-'as' for ascending or 'de' for descending: as
-The order of "Surname" is changed.
-```
+ Result:
+![alt text](./results/sort_by_column.png "sort_by_column")
 
 ## Quit
 Use `\q` or `--quit` to exit the program.
@@ -427,6 +392,8 @@ def quit_prog():
     print("Thank you and Goodbye")
     exit()
 ```
+ Result:
+![alt text](./results/quit.png "quit")
 
 # Help List
 The help information is generated based on the information commander already knows about the program. The default help option is `-h,--help`.
@@ -593,7 +560,7 @@ def tidy_dataframe():
     df = df.drop_duplicates()
     df.reset_index(inplace=True)
     del df['index']
-    print("Diminish spaces and title values")
+    print("Dataframe is cleaned")
 
     return main()
 
