@@ -57,11 +57,12 @@ def input_csv(raw_data):
     else:
         return raw_data
 
+print("Welcome to the data cleaning program! Type '-h' or '--help' to know the command of the program.")
 raw_data = input_csv(raw_data)
 df = pd.DataFrame(raw_data)
 ```
 Result:
-![alt text](./results/input_csv.png "input_csv")
+![alt text](input_csv.png "input_csv")
 
 ## Check Empty Values
 Then the program will look for empty values by calling this function automatically.
