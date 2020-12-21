@@ -110,7 +110,6 @@ def normalization():
         df[col] = ['('.join(i.split("\r\n(")) for i in df[col]]
         for row in range(0, len(df)):
             cell_value = df[col][row]
-            # if type(cell_value) == np.int64: cell_value = str(cell_value.item())
             cell_value_list = list(map(str, cell_value.split("\r\n")))
             if (len(cell_value_list) > 1 and not col in column_with_multi_values): column_with_multi_values.append(col)
 
@@ -128,8 +127,6 @@ def tidy_dataframe():
     global df
 
     for i in list(df.columns):
-        # print(type(df[i][0]) == str)
-        # df[i] = [i.replace("-", "") for i in df[i]]
         if 'E-mail' in i: continue
         elif 'Location' in i: df[i] = [''.join(i.split()).upper() for i in df[i]]
         elif 'Phone' in i: df[i] = [re.sub(r"[^A-Za-z0-9]+", "", i) for i in df[i]]
