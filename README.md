@@ -144,22 +144,24 @@ Result:
 ![alt text](./results/tidy_dataframe.png "tidy_dataframe")
 
 # Options
-Usage of options
 
 ## Print Dataframe
 To print the current dataframe, use `-p` or `--print`.
-Then it will return to main function.
+Then it will return to the main function.
 ```py
 if usr_input == '-p' or usr_input == '--print':
     print(df)
     main()
 ```
+Result:
+![alt text](./results/print.png "print")
 
 ## Modify Column Title
 To modify a title in a selected column, use `-M` or `--modify_col_name` to change the string.
-The local variable `col` will be formed by asking the user to type the name of a column that want to change, and `i` will record the changed name.
-If else ensure user to input correct column name, otherwise will ask for input again.
-User can return to the main function by typing `\q`.
+Column names will be shown in the console for reminding.
+A local variable `col` will be formed by asking the user to type the name of the column for changing, and `i` will record the changed name.
+`If else` condition ensures the user to input the listed column name, otherwise ask for input again by returning to the beginning of the function.
+User can return to the main function by typing `\q`. Global variable `df` is changed.
 ```py
 def modify_column_name():
     global df
@@ -171,26 +173,22 @@ def modify_column_name():
     i = input("Updated name: ")
     df = df.rename(columns={col: i})
     print(f'"{col}" is changed to "{i}".')
+
     return main()
  ```
- Result in console:
- ```bash
-prog -M
-['Title' 'Surname' 'Given Name' 'Position' 'Location' 'E-mail Address'
- 'Phone Number']
-Name of column that you want to rename: Title
-Updated name: Rename-Title
-"Title" is changed to "Rename-Title".
- ```
+Result:
+![alt text](./results/modify_column_name.png "modify_column_name")
 
 ## Modify cell
 To modify a value in a selected cell, use `-m` or `--modify_cell` to change the string.
-The local variable `col`, `row` and `value` save user's input to locate the specific cell, then change to the value in `value`.
-If else can prevent the user from inputting incorrect column name and row that exceeds the total number of row in the dataframe, and restrict the user to input again.
-User can return to the main function by typing `\q`.
+Column names and numbers of the row will be shown in the console for reminding.
+The local variable `col` and `row` save user's input that locating to the specific cell, then change to the value in `value`.
+`If else` condition can prevent the user from entering an incorrect column name and row that exceeds the total number of row in the dataframe, and restrict the user to input again.
+User can return to the main function by typing `\q`. Global variable `df` is changed.
 ```py
 def modify_cell():
     global df
+    
     print("Input row, column and value to a cell that you want to change")
     print("Length of dataframe is", len(df) - 1, '\n', df.columns.values)
     row = input("Number of Row: ")
@@ -206,18 +204,8 @@ def modify_cell():
 
     return main()
  ```
- Result in console:
-```bash
-prog -m
-Input row, column and value to a cell that you want to change
-Length of dataframe is 16
- ['Title' 'Surname' 'Given Name' 'Position' 'Location' 'E-mail Address'
- 'Phone Number']
-Number of Row: 1
-Name of Column: Title
-Value: Mr.
-The value of row 1 in "Title" is changed to "Mr.".
-```
+ Result:
+![alt text](./results/modify_cell.png "modify_cell")
 
 ## Count Values in Selected Column
 To count the number of values in a specific column, use `-C` or `--count_column`.
