@@ -22,6 +22,7 @@
     - [Flow Chart](#flow-chart)
     - [Appendix](#appendix)
 
+Checkout GitHub: https://github.com/guyverhl/data-cleaning-normalization.git
 # Requirement
 This program requires `pandas` and `re` library to run, you need to install them before running successfully.
 ```bash
