@@ -23,24 +23,27 @@
     - [Appendix](#appendix)
 
 # Requirement
-This script requires `pandas`, `numpy` and `re` library to run, you need to install to run successfully.
+This program requires `pandas`, `numpy` and `re` library to run, you need to install them before to run successfully.
 ```bash
 pip3 install pandas
+pip3 install numpy
 ```
 
 # Usage
-The program is processing the step of data cleaning. It will detect any spaces and empty values, then transform to first normal formal utilizing normalization. After that user can reproduce a cleaned version of the CSV file.
+The program is processing data cleaning and normalization. 
+It will detect any spaces and empty values, then transform to first normal form. 
+After that user can reproduce a tidy CSV file.
 ```bash
 python3 individual_ex.py
 ```
 
 ## Input CSV
-First input CSV for processing.
-`CSV name` in the current folder with the program or `absolute path` is accessible.
-The input parameter is `raw_data`. Try except is used to prevent `No file or directory` error.
-User can terminate the program by typing `\q`.
-The error will be printed and force the user to input the correct file or directory again.
-This function will return the parameter `raw_data` to create dataframe.
+CSV is needed for handling firstly.
+By using `input_csv` function, the user require to enter the CSV in the current folder with the program or the absolute path, forming a local variable `csv_file`.
+User can terminate the program by typing `\q` passing through `if-else`.
+`Try-except` is used to prevent `No file or directory` error.
+The function will return to the global parameter `raw_data` to create dataframe if the program successfully read the CSV file.
+Otherwise, the program will print the error and force the user to input the correct file or directory again by return to the beginning of the function.
 ```py
 raw_data = None
 def input_csv(raw_data):
@@ -57,10 +60,8 @@ def input_csv(raw_data):
 raw_data = input_csv(raw_data)
 df = pd.DataFrame(raw_data)
 ```
-Result in console:
-```bash
-Input CSV file (staff_dir.csv): staff_dir.csv
-```
+Result:
+![alt text](./results/input_csv.png "input_csv")
 
 ## Check Empty Values
 Then the program will look for empty values by calling this function automatically.
