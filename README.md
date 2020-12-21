@@ -23,7 +23,7 @@
     - [Appendix](#appendix)
 
 # Requirement
-This program requires `pandas`, `numpy` and `re` library to run, you need to install them before to run successfully.
+This program requires `pandas`, `numpy` and `re` library to run, you need to install them before running successfully.
 ```bash
 pip3 install pandas
 pip3 install numpy
@@ -43,7 +43,7 @@ By using `input_csv` function, the user require to enter the CSV in the current 
 User can terminate the program by typing `\q` passing through `if-else`.
 `Try-except` is used to prevent `No file or directory` error.
 The function will return to the global parameter `raw_data` to create dataframe if the program successfully read the CSV file.
-Otherwise, the program will print the error and force the user to input the correct file or directory again by return to the beginning of the function.
+Otherwise, the program will print the error and force the user to input the correct file or directory again by returning to the beginning of the function.
 ```py
 raw_data = None
 def input_csv(raw_data):
@@ -62,15 +62,14 @@ raw_data = input_csv(raw_data)
 df = pd.DataFrame(raw_data)
 ```
 Result:
-![alt text](input_csv.png "input_csv")
+![alt text](./results/input_csv.png "input_csv")
 
 ## Check Empty Values
 Then the program will look for empty values by calling this function automatically.
-It requires a global variable `df`. Firstly, the function will search for any `Unnamed` column name and scan values in each column to find any column is containing empty values.
-After that, the conclusion will be shown and it will return to the main function.
+It utilises the global variable `df`, searches for any `Unnamed` column and scans each cell in every column to find any empty values.
+Every column's name will first change to title textcase furthermore add into `empty_cols_name` and `empty_cols` list if it contains empty values.
+The conclusion will be shown in the console and then return to the main function.
 ```py
-check_columns_with_empty_cell(df)
-
 def check_columns_with_empty_cell(df):
 
     df.columns = [' '.join(i.split()) for i in df.columns]
@@ -81,17 +80,14 @@ def check_columns_with_empty_cell(df):
 
     return main()
 ```
-Result in console:
-```bash
-You have 0 columns without naming
-You have 0 columns with empty cells
-```
+Result:
+![alt text](./results/input_csv.png "input_csv")
 
 ## Normalization
-Then the program will normalize dataframe to first normal form by using `-r` or `--run` to start.
-Global variable `df` will be used to expend rows containing `\r\n` to ensure each cell only contain one value.
-A list `column_with_multi_values` is formed to save columns with multiple values.
-Then by setting index without the particular column, use `.explode()` to append the row to perform normalization.
+The program will start normalizing dataframe to first normal form by entering `-r` or `--run`.
+By finding columns containing `\r\n`, which means it has multiple values in a cell, it will add into a local list `column_with_multi_values` after and set an `if-else` condition to add an undiscovered column only.
+Then by setting index without the particular column, use `.explode()` to append the row to perform normalization. 
+Global variable `df` is changed and automatically call `tidy_dataframe` function for cleaning data.
 ```py
 def normalization():
     global df
@@ -116,12 +112,11 @@ def normalization():
 ```
 
 ## Tidy Dataframe
-Later the program will delete all excessing spaces and replace data automatically.
-By continuing the `normalization()` function, it will eliminate excessive spaces and change to `title` textcase.
-In `Location`, all strings will change to `upper` textcase.
-In `Phone`, all special characters will be removed.
-In `Position`, all abbreviations will extend to long format.
-After that, the index number will be reset to reproduce as row number.
+After normalization, the program will delete all excessive spaces tidy up the dataframe.
+By using `if-else` condition, all strings will change to `upper` textcase in `Location`.
+All special characters will be removed in `Phone` and all abbreviations will extend to long format in `Position`. 
+After that, duplicated rows will be shown in the console and eliminated, next the index number will be reset as the row number. 
+Global variable `df` is changed.
 ```py
 def tidy_dataframe():
     global df
@@ -141,23 +136,12 @@ def tidy_dataframe():
     df = df.drop_duplicates()
     df.reset_index(inplace=True)
     del df['index']
-    print("Diminish spaces and title values")
+    print("Dataframe is cleaned")
 
     return main()
 ```
-Result in console:
-```bash
-prog -r
-Normalization is complete
-Duplicated Rows: 
-     Title Surname   Given Name  E-mail Address Phone Number                 Position Location
-15  Prof.    Tang  Akaysha Can   actang@hku.hk     25698751                Professor    MW523
-16  Prof.    Tang  Akaysha Can   actang@hku.hk     25698751                Professor    MW538
-17  Prof.    Tang  Akaysha Can   actang@hku.hk     25698751  Director Of The Nfe Lab    MW523
-18  Prof.    Tang  Akaysha Can   actang@hku.hk     25698751  Director Of The Nfe Lab    MW538
-24    Dr.     Lai         Chun  laichun@hku.hk     25698761      Associate Professor    MW623
-Diminish spaces and title values
-```
+Result:
+![alt text](./results/tidy_dataframe.png "tidy_dataframe")
 
 # Options
 Usage of options
